@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Voting</title>
+    <link rel="stylesheet" href="../css/vote.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!--    <link rel="stylesheet" href="../css/logout.css">-->
+</head>
+<body>
+<!-- Header with Logout -->
+<!--<div class="adminBtn">-->
+<!--    <button>Logout</button>-->
+<!--    <button>Logout</button>-->
+<!--    <button id="logoutBtn">Logout</button>-->
+<!--</div>-->
+
+<header class="header-bar">
+    <div class="header-content">
+        <h1 class="logo"></h1>
+        <div class="btns">
+<!--            <a href="vote.html" class="btn header-btn">Votes</a>-->
+            <a href="admin.html" class="btn header-btn">Home</a>
+            <a href="candidates.html" class="btn header-btn">Candidates</a>
+            <a href="offices.html" class="btn header-btn">Offices</a>
+            <a href="results.html" class="btn header-btn">Results</a>
+<!--            <a href="changePW.html" class="btn header-btn">Change Password</a>-->
+<!--            <a href="resetPW.html" class="btn header-btn">Reset Password</a>-->
+            <button id="logoutBtn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+</header>
+
+
+<div class="votes-list">
+    <h2>All Users</h2>
+    <div class="all-users">
+        <button id="loadUsers">Load Users</button>
+        <!-- Upload button -->
+        <label for="uploadFile" class="upload-btn">
+            <span>📤</span>
+            <input type="file" id="uploadFile" style="display:none">
+        </label>
+    </div>
+
+    <table id="usersTable">
+        <thead>
+        <tr>
+            <th>Username</th>
+            <th style="width: 10%;">Name</th>
+            <th style="width: 15%;">Phone</th>
+            <th style="width: 20%;">Role</th>
+            <th style="width: 30%;">Action</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+
+<!-- Modal -->
+<!--<div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">-->
+<!--    <div class="modal-dialog">-->
+<!--        <div class="modal-content">-->
+<!--            <div class="modal-header">-->
+<!--                <h5 class="modal-title" id="exampleModalLabel">Change User Password</h5>-->
+<!--                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+<!--            </div>-->
+<!--            <div class="modal-body">-->
+<!--                <form id="changePasswordForm">-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="username" class="form-label">Username</label>-->
+<!--                        <input type="text" id="username" class="form-control" required>-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="oldPassword" class="form-label">Old Password</label>-->
+<!--                        <input type="password" id="oldPassword" class="form-control" required>-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="newPassword" class="form-label">New Password</label>-->
+<!--                        <input type="password" id="newPassword" class="form-control" required>-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="confirmPassword" class="form-label">Confirm New Password</label>-->
+<!--                        <input type="password" id="confirmPassword" class="form-control" required>-->
+<!--                    </div>-->
+<!--                    <button type="submit" class="btn btn-primary">Change Password</button>-->
+<!--                </form>-->
+<!--            </div>-->
+<!--            <div class="modal-footer">-->
+<!--                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
+<!--                <button type="button" class="btn btn-primary">Save changes</button>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--<script src="../js/admin.js"></script>-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script src="../js/user.js"></script>
+<script src="../js/logout.js"></script>
+</body>
+</html>

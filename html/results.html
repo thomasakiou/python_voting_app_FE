@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Voting</title>
+    <link rel="stylesheet" href="../css/vote.css">
+    <!--    <link rel="stylesheet" href="../css/logout.css">-->
+</head>
+<body>
+<!-- Header with Logout -->
+<!--<div class="adminBtn">-->
+<!--    <button>Logout</button>-->
+<!--    <button>Logout</button>-->
+<!--    <button id="logoutBtn">Logout</button>-->
+<!--</div>-->
+
+<header class="header-bar">
+    <div class="header-content">
+        <h1 class="logo"></h1>
+        <div class="btns">
+            <a href="admin.html" class="btn header-btn">Home</a>
+            <a href="user.html" class="btn header-btn">Users</a>
+            <a href="candidates.html" class="btn header-btn">Candidates</a>
+            <a href="offices.html" class="btn header-btn">Offices</a>
+<!--            <a href="vote.html" class="btn header-btn">Votes</a>-->
+<!--            <a href="changePW.html" class="btn header-btn">Change Password</a>-->
+<!--            <a href="resetPW.html" class="btn header-btn">Reset Password</a>-->
+            <button id="logoutBtn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+</header>
+
+
+<div class="votes-list">
+    <div class="container mt-5">
+        <h2>Vote Results</h2>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <select id="officeDropdown" class="form-select">
+                    <option value="">-- Select Office --</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button id="loadResultsBtn" class="btn btn-primary">Load Results</button>
+            </div>
+        </div>
+
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Candidate</th>
+                <th>Votes</th>
+            </tr>
+            </thead>
+            <tbody id="resultsTableBody">
+            <tr><td colspan="2">Select an office and click "Load Results".</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="../js/result.js"></script>
+<script src="../js/logout.js"></script>
+</body>
+</html>

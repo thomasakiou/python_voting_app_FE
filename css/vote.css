@@ -1,0 +1,422 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+
+h2 {
+    text-align: center;
+    color: #222;
+    margin-bottom: 20px;
+}
+
+/*!* ===== Header Bar ===== *!*/
+/*.logout {*/
+/*    !*display: flex;*!*/
+/*    !*justify-content: space-between;*!*/
+/*    !*align-items: center;*!*/
+/*    !*padding: 12px 20px;*!*/
+/*    background-color: #004080; !* deep blue *!*/
+/*    color: #ffffff;*/
+/*    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);*/
+/*}*/
+
+/*.logout h2 {*/
+/*    margin: 0;*/
+/*    font-size: 20px;*/
+/*    font-weight: 600;*/
+/*}*/
+
+/* ===== Logout Button ===== */
+#logoutBtn {
+    /*padding: 8px 14px;*/
+    background-color: #e74c3c; /* red */
+    width: auto;
+    border: none;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+
+/*#logoutBtn:hover {*/
+/*    background-color: #c0392b; !* darker red *!*/
+/*    transform: scale(1.05);*/
+/*}*/
+
+/*#logoutBtn:active {*/
+/*    transform: scale(0.95);*/
+/*}*/
+
+/* Style logout button */
+.adminBtn {
+    position: fixed;         /* stick in place */
+    top: 15px;               /* space from top */
+    right: 20px;             /* space from right */
+    display: flex;   /* don’t stretch full width */
+    gap: 10px;
+    width: auto;             /* only as wide as text */
+    padding: 10px 20px;
+    /*background-color: #e63946;*/
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    z-index: 1000;
+}
+
+/* Header bar container */
+.header-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: #2c3e50;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 1000;
+}
+
+/* Inner header content */
+.header-content {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* center logo by default */
+    position: relative; /* allows absolutely positioning .btns */
+    padding: 0 20px;
+}
+
+/* Centered logo */
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* Button group pinned to right */
+.btns {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    position: absolute;
+    right: 20px;
+}
+
+/* Links in header */
+.btns a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.btns a:hover {
+    color: #888383;
+}
+
+/* Logout button */
+#logoutBtn {
+    background: #e74c3c;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+
+#logoutBtn:hover {
+    background-color: #c92c3a;
+}
+
+
+#logoutBtn:focus {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+
+.vote-container {
+    max-width: 600px;
+    margin: 100px auto;
+    padding: 25px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.votes-list {
+    max-width: 1000px;
+    margin: 100px auto;
+    padding: 25px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+select {
+    background-color: #fff;   /* White dropdown background */
+    color: #333;              /* Dark text for visibility */
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    width: 100%;
+    cursor: pointer;
+}
+
+select option {
+    background-color: #fff;   /* Background for dropdown items */
+    color: #333;              /* Visible text */
+    padding: 8px;
+}
+
+select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 3px rgba(0,123,255,0.5);
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 6px;
+}
+
+select, button {
+    width: 100%;
+    padding: 10px;
+    font-size: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background: #007bff;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+#voteMessage {
+    margin-top: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+table th, table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+table th {
+    background: #f1f1f1;
+}
+
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #444;
+}
+
+select, button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+}
+
+select {
+    background-color: #fff;
+    color: #333;
+}
+
+select option {
+    color: #333;
+    background-color: #fff;
+}
+
+button {
+    background-color: #1976d2;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+button:hover {
+    background-color: #125ea6;
+}
+
+#voteMessage {
+    margin-top: 15px;
+    text-align: center;
+    font-weight: bold;
+}
+
+
+/* Dropdown Styling */
+#officeDropdown {
+    padding: 8px 12px;
+    margin: 10px 0;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+#officeDropdown:hover {
+    border-color: #007bff;
+}
+
+#officeDropdown:focus {
+    outline: none;
+    border-color: #0056b3;
+    box-shadow: 0 0 5px rgba(0, 91, 187, 0.5);
+}
+
+/* Label spacing */
+label[for="officeDropdown"] {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+
+/* Upload button styling */
+.upload-btn {
+    display: inline-block;
+    background-color: #4CAF50; /* green */
+    color: #fff;
+    padding: 5px 9px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    /*margin-left: 10px; !* space from "Load Offices" button *!*/
+    user-select: none;
+}
+
+.upload-btn:hover {
+    background-color: #45a049; /* darker green */
+    transform: translateY(-2px);
+}
+
+.upload-btn:active {
+    background-color: #3e8e41;
+    transform: translateY(0);
+}
+
+/* Icon inside upload button */
+.upload-btn span {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 14px;
+}
+
+/* Make sure hidden input never shows */
+.upload-btn input[type="file"] {
+    display: none;
+}
+
+
+.all-users {
+    display: flex;
+    gap: 16px;
+}
+
+/* Upload button styling */
+.add-btn {
+    display: inline-block;
+    background-color: #4CAF50; /* green */
+    color: #070202;
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-size: 30px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    /*margin-left: 10px; !* space from "Load Offices" button *!*/
+    user-select: none;
+}
+
+.add-btn:hover {
+    background-color: #45a049; /* darker green */
+    transform: translateY(-2px);
+}
+
+.add-btn:active {
+    background-color: #3e8e41;
+    transform: translateY(0);
+}
+
+/* Icon inside upload button */
+.add-btn span {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 14px;
+}
+
+
+#usersTable th,
+#usersTable td {
+    text-align: left;
+    vertical-align: middle;
+    padding: 10px; /* add breathing room */
+    white-space: nowrap; /* prevent wrapping if you prefer */
+}
+
+#usersTable td:last-child {
+    display: flex;
+    gap: 10px;
+    /*flex-wrap: wrap; !* allows buttons to wrap nicely *!*/
+}

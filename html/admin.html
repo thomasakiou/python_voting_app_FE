@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Voting</title>
+    <link rel="stylesheet" href="../css/vote.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<!--    <link rel="stylesheet" href="../css/logout.css">-->
+</head>
+<body>
+
+<header class="header-bar">
+    <div class="header-content">
+        <h1 class="logo"></h1>
+        <div class="btns">
+            <a href="user.html" class="btn header-btn">Users</a>
+            <a href="candidates.html" class="btn header-btn">Candidates</a>
+            <a href="offices.html" class="btn header-btn">Offices</a>
+            <a href="results.html" class="btn header-btn">Results</a>
+<!--            <a href="changePW.html" class="btn header-btn">Change Password</a>-->
+<!--            <a href="resetPW.html" class="btn header-btn">Reset Password</a>-->
+            <button id="logoutBtn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+</header>
+
+
+<div class="votes-list">
+    <h2>All Votes</h2>
+    <!-- ✅ Dropdown for voters -->
+    <div class="voter-select">
+        <label for="voterDropdown">Select Voter:</label>
+        <select id="voterDropdown">
+            <option value="">-- All Voters --</option>
+            <!-- Voters will be dynamically loaded here -->
+        </select>
+    </div>
+
+    <button id="loadVotes" class="mt-5">Load Votes</button>
+    <table id="votesTable">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Voter</th>
+            <th>Candidate Voted For</th>
+            <th>Office Voted For</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script src="../js/admin.js"></script>
+<script src="../js/logout.js"></script>
+</body>
+</html>

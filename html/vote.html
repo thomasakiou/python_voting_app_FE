@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Voting</title>
+    <link rel="stylesheet" href="../css/vote.css">
+<!--    <link rel="stylesheet" href="../css/logout.css">-->
+</head>
+<body>
+<!-- Header with Logout -->
+<!--<div class="logout">-->
+<!--    <h2>Voting Portal</h2>-->
+<!--    <button id="logoutBtn">-->
+<!--        Logout-->
+<!--    </button>-->
+<!--</div>-->
+
+<header class="header-bar">
+    <div class="header-content">
+        <h1 class="logo">Voting System</h1>
+        <div class="btns">
+<!--            <a href="index.html" class="btn header-btn">Home</a>-->
+<!--            <a href="vote.html" class="btn header-btn">Vote</a>-->
+            <button id="logoutBtn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+</header>
+
+
+
+<div class="vote-container">
+    <h2>Cast Your Vote</h2>
+    <form id="voteForm">
+        <div class="input-group">
+            <label for="office_code">Select Office</label>
+            <select id="office_code" name="office_code" required>
+                <option value="">-- Select Office --</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="candidate_code">Select Candidate</label>
+            <select id="candidate_code" name="candidate_code" required>
+                <option value="">-- Select Candidate --</option>
+            </select>
+        </div>
+        <button type="submit">Submit Vote</button>
+    </form>
+    <p id="voteMessage"></p>
+</div>
+
+<!--<div class="votes-list">-->
+<!--    <h2>All Votes (Admins only)</h2>-->
+<!--    <button id="loadVotes">Load Votes</button>-->
+<!--    <table id="votesTable">-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th>ID</th>-->
+<!--            <th>User</th>-->
+<!--            <th>Candidate</th>-->
+<!--            <th>Office</th>-->
+<!--            <th>Created At</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody></tbody>-->
+<!--    </table>-->
+<!--</div>-->
+
+<script src="../js/vote.js"></script>
+<!--<script src="../js/auth.js"></script>-->
+<script src="../js/logout.js"></script>
+</body>
+</html>
+
+
+
+
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Voting</title>-->
+<!--    <link rel="stylesheet" href="../css/vote.css">-->
+<!--</head>-->
+<!--<body>-->
+<!--<div class="vote-container">-->
+<!--    <h2>Cast Your Vote</h2>-->
+<!--    <form id="voteForm">-->
+<!--        <div class="input-group">-->
+<!--            <label for="office_code">Select Office</label>-->
+<!--            <select id="office_code" name="office_code" required>-->
+<!--                <option value="">&#45;&#45; Select Office &#45;&#45;</option>-->
+<!--            </select>-->
+<!--        </div>-->
+<!--        <div class="input-group">-->
+<!--            <label for="candidate_code">Select Candidate</label>-->
+<!--            <select id="candidate_code" name="candidate_code" required>-->
+<!--                <option value="">&#45;&#45; Select Candidate &#45;&#45;</option>-->
+<!--            </select>-->
+<!--        </div>-->
+<!--        <button type="submit">Submit Vote</button>-->
+<!--    </form>-->
+<!--    <p id="voteMessage"></p>-->
+<!--</div>-->
+
+
+<!--<div class="votes-list">-->
+<!--    <h2>All Votes (Admins only)</h2>-->
+<!--    <button id="loadVotes">Load Votes</button>-->
+<!--    <table id="votesTable">-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th>ID</th>-->
+<!--            <th>User</th>-->
+<!--            <th>Candidate</th>-->
+<!--            <th>Office</th>-->
+<!--            <th>Created At</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody></tbody>-->
+<!--    </table>-->
+<!--</div>-->
+
+<!--<script src="../js/vote.js"></script>-->
+<!--</body>-->
+<!--</html>-->
