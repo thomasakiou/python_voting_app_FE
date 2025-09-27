@@ -1,4 +1,6 @@
-document.addEventListener("DOMContentLoaded", () => {
+import {API_BASE, configReady} from "./config";
+
+document.addEventListener("DOMContentLoaded", async () => {
     const resetBtn = document.getElementById("resetBtn");
     const usernameInput = document.getElementById("usernameInput");
     const messageDiv = document.getElementById("message");
@@ -10,6 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+    await configReady;
+
     resetBtn.addEventListener("click", async () => {
         const username = usernameInput.value.trim();
         if (!username) {
@@ -20,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!confirm(`Are you sure you want to reset password for "${username}"?`)) return;
 
         try {
-            const response = await fetch(`http://localhost:8000/reset-password/${username}`, {
+            const response = await fetch(`${API_BASE}/reset-password/${username}`, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,

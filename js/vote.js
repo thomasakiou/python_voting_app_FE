@@ -1,12 +1,16 @@
 // ========================
 // Load Offices on Page Load
 // ========================
+import {API_BASE, configReady} from "./config.js";
+
 document.addEventListener("DOMContentLoaded", async () => {
     const officeSelect = document.getElementById("office_code");
     const token = localStorage.getItem("access_token");
 
+    await configReady;
+
     try {
-        const response = await fetch("http://localhost:8000/offices", {
+        const response = await fetch(`${API_BASE}/offices`, {
             headers: { "Authorization": "Bearer " + token }
         });
 
@@ -37,7 +41,7 @@ document.getElementById("office_code").addEventListener("change", async (e) => {
     const token = localStorage.getItem("access_token");
 
     try {
-        const response = await fetch(`http://localhost:8000/candidates/${officeCode}/candidates`, {
+        const response = await fetch(`${API_BASE}/candidates/${officeCode}/candidates`, {
             headers: { "Authorization": "Bearer " + token }
         });
 
@@ -73,7 +77,7 @@ document.getElementById("voteForm").addEventListener("submit", async (e) => {
     }
 
     try {
-        const response = await fetch("http://localhost:8000/votes/", {
+        const response = await fetch(`${API_BASE}/votes/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

@@ -71,11 +71,15 @@
 //         alert("Network error.");
 //     }
 // });
-document.addEventListener("DOMContentLoaded", () => {
+import {API_BASE, configReady} from "./config.js";
+
+document.addEventListener("DOMContentLoaded", async () => {
     const uploadInput = document.getElementById("uploadFile");
     const token = localStorage.getItem("access_token");
 
     if (!uploadInput) return;
+
+    await configReady;
 
     uploadInput.addEventListener("change", async (event) => {
         const file = event.target.files[0];
@@ -90,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
         formData.append("file", file);
 
         try {
-            const response = await fetch("http://localhost:8000/users/upload-csv", {
+            const response = await fetch(`${API_BASE}/users/upload-csv`, {
                 method: "POST",
                 headers: {
                     "Authorization": "Bearer " + token
@@ -116,11 +120,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-
+// import {API_BASE, configReady} from "./config.js";
 // ========================
 // GET ALL USERS (ADMIN ONLY)
 // ========================
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const loadUsersBtn = document.getElementById("loadUsers");
     const token = localStorage.getItem("access_token");
     const tbody = document.querySelector("#usersTable tbody");
@@ -129,14 +133,15 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("You must log in first.");
         return;
     }
+    await configReady;
 
     async function loadUsers() {
         tbody.innerHTML = "";
 
         try {
-            const response = await fetch("http://localhost:8000/users/", {
+            const response = await fetch(`${API_BASE}/users/`, {
                 method: "GET",
-                headers: { "Authorization": "Bearer " + token }
+                headers: {"Authorization": "Bearer " + token}
             });
 
             if (response.ok) {
@@ -167,9 +172,9 @@ document.addEventListener("DOMContentLoaded", () => {
                             if (!confirm("Are you sure you want to delete this user?")) return;
 
                             try {
-                                const response = await fetch(`http://localhost:8000/users/${userId}`, {
+                                const response = await fetch(`${API_BASE}/users/${userId}`, {
                                     method: "DELETE",
-                                    headers: { "Authorization": `Bearer ${token}` }
+                                    headers: {"Authorization": `Bearer ${token}`}
                                 });
 
                                 if (response.ok) {
@@ -193,9 +198,9 @@ document.addEventListener("DOMContentLoaded", () => {
                             if (!confirm(`Reset password for user "${username}"?`)) return;
 
                             try {
-                                const response = await fetch(`http://localhost:8000/reset-password/${username}`, {
+                                const response = await fetch(`${API_BASE}/reset-password/${username}`, {
                                     method: "POST",
-                                    headers: { "Authorization": `Bearer ${token}` }
+                                    headers: {"Authorization": `Bearer ${token}`}
                                 });
 
                                 if (response.ok) {

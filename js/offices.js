@@ -123,7 +123,9 @@
 
 
 
-document.addEventListener("DOMContentLoaded", () => {
+import {API_BASE, configReady} from "./config.js";
+
+document.addEventListener("DOMContentLoaded", async () => {
     const token = localStorage.getItem("access_token");
     const loadOfficesBtn = document.getElementById("loadOffices");
     const tbody = document.querySelector("#officesTable tbody");
@@ -139,12 +141,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let editingOfficeId = null; // track office being updated
 
+    await configReady;
+
     // Load offices from backend
     async function loadOffices() {
+        // await configReady;
         tbody.innerHTML = "";
         try {
-            const response = await fetch("http://localhost:8000/offices/", {
-                headers: { "Authorization": `Bearer ${token}` }
+            const response = await fetch(`${API_BASE}/offices/`, {
+                headers: {"Authorization": `Bearer ${token}`}
             });
 
             if (response.ok) {
@@ -173,9 +178,9 @@ document.addEventListener("DOMContentLoaded", () => {
                             if (!confirm("Are you sure you want to delete this office?")) return;
 
                             try {
-                                const response = await fetch(`http://localhost:8000/offices/${officeId}`, {
+                                const response = await fetch(`${API_BASE}/offices/${officeId}`, {
                                     method: "DELETE",
-                                    headers: { "Authorization": `Bearer ${token}` }
+                                    headers: {"Authorization": `Bearer ${token}`}
                                 });
 
                                 if (response.ok) {
@@ -225,13 +230,13 @@ document.addEventListener("DOMContentLoaded", () => {
         // If editingOfficeId is set, perform update
         if (editingOfficeId) {
             try {
-                const response = await fetch(`http://localhost:8000/offices/${editingOfficeId}`, {
+                const response = await fetch(`${API_BASE}/offices/${editingOfficeId}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`
                     },
-                    body: JSON.stringify({ office_code: officeCode, description })
+                    body: JSON.stringify({office_code: officeCode, description})
                 });
 
                 if (response.ok) {
@@ -250,13 +255,13 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             // Create new office
             try {
-                const response = await fetch("http://localhost:8000/offices/", {
+                const response = await fetch(`${API_BASE}/offices`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`
                     },
-                    body: JSON.stringify({ office_code: officeCode, description })
+                    body: JSON.stringify({office_code: officeCode, description})
                 });
 
                 if (response.ok) {

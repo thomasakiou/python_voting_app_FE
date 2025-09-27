@@ -1,3 +1,5 @@
+import {API_BASE, configReady} from "./config";
+
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("changePasswordForm");
     const messageDiv = document.getElementById("message");
@@ -20,8 +22,10 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        await configReady;
+
         try {
-            const response = await fetch("http://localhost:8000/change-password", {
+            const response = await fetch(`${API_BASE}/change-password`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, old_password: oldPassword, new_password: newPassword })

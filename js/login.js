@@ -1,3 +1,5 @@
+import {API_BASE, configReady} from "./config.js";
+
 function parseJwt(token) {
     try {
         const base64Url = token.split(".")[1];
@@ -27,7 +29,12 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     formData.append("username", username);
     formData.append("password", password);
 
-    const response = await fetch("http://localhost:8000/login", {
+    await configReady;
+
+    // const API_BASE = getApiBase();
+    // console.log(API_BASE);
+
+    const response = await fetch(`${API_BASE}/login`, {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
@@ -94,7 +101,7 @@ document.getElementById("savePasswordBtn").addEventListener("click", async () =>
     }
 
     try {
-        const response = await fetch("http://localhost:8000/change-password", {
+        const response = await fetch(`${API_BASE}/change-password`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

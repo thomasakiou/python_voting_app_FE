@@ -1,4 +1,6 @@
-document.addEventListener("DOMContentLoaded", () => {
+import {API_BASE, configReady} from "./config.js";
+
+document.addEventListener("DOMContentLoaded", async () => {
     const token = localStorage.getItem("access_token");
     const loadCandidatesBtn = document.getElementById("loadCandidates");
     const officeDropdownFilter = document.getElementById("officeDropdown"); // filter dropdown
@@ -18,11 +20,13 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+    await configReady;
+
     // Load offices into both filter and modal dropdown
     async function loadOffices() {
         try {
-            const response = await fetch("http://localhost:8000/offices/", {
-                headers: { "Authorization": `Bearer ${token}` }
+            const response = await fetch(`${API_BASE}/offices`, {
+                headers: {"Authorization": `Bearer ${token}`}
             });
             if (response.ok) {
                 const offices = await response.json();
@@ -55,12 +59,12 @@ document.addEventListener("DOMContentLoaded", () => {
         tbody.innerHTML = "";
         const officeCode = officeDropdownFilter.value;
         const url = officeCode
-            ? `http://localhost:8000/candidates/${officeCode}/candidates`
-            : "http://localhost:8000/candidates/";
+            ? `${API_BASE}/candidates/${officeCode}/candidates`
+            : `${API_BASE}/candidates`;
 
         try {
             const response = await fetch(url, {
-                headers: { "Authorization": `Bearer ${token}` }
+                headers: {"Authorization": `Bearer ${token}`}
             });
             if (!response.ok) {
                 const error = await response.json().catch(() => ({}));
@@ -99,9 +103,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         const candidateId = e.target.dataset.id;
                         if (!confirm("Are you sure you want to delete this candidate?")) return;
                         try {
-                            const response = await fetch(`http://localhost:8000/candidates/${candidateId}`, {
+                            const response = await fetch(`${API_BASE}/candidates/${candidateId}`, {
                                 method: "DELETE",
-                                headers: { "Authorization": `Bearer ${token}` }
+                                headers: {"Authorization": `Bearer ${token}`}
                             });
                             if (response.ok) {
                                 alert("Candidate deleted successfully!");
@@ -148,23 +152,23 @@ document.addEventListener("DOMContentLoaded", () => {
             let response;
             if (editingCandidateId) {
                 // Update candidate
-                response = await fetch(`http://localhost:8000/candidates/${editingCandidateId}`, {
+                response = await fetch(`${API_BASE}/candidates/${editingCandidateId}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`
                     },
-                    body: JSON.stringify({ candidate_code: candidateCode, name, office_code: officeCode })
+                    body: JSON.stringify({candidate_code: candidateCode, name, office_code: officeCode})
                 });
             } else {
                 // Create candidate
-                response = await fetch("http://localhost:8000/candidates/", {
+                response = await fetch(`${API_BASE}/candidates/`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`
                     },
-                    body: JSON.stringify({ candidate_code: candidateCode, name, office_code: officeCode })
+                    body: JSON.stringify({candidate_code: candidateCode, name, office_code: officeCode})
                 });
             }
 

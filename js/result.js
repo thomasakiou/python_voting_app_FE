@@ -1,4 +1,6 @@
-document.addEventListener("DOMContentLoaded", () => {
+import {API_BASE, configReady} from "./config.js";
+
+document.addEventListener("DOMContentLoaded", async () => {
     const token = localStorage.getItem("access_token");
     const officeDropdown = document.getElementById("officeDropdown");
     const loadResultsBtn = document.getElementById("loadResultsBtn");
@@ -10,11 +12,13 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+    await configReady;
+
     // Load offices into dropdown
     async function loadOffices() {
         try {
-            const response = await fetch("http://localhost:8000/offices/", {
-                headers: { "Authorization": `Bearer ${token}` }
+            const response = await fetch(`${API_BASE}/offices/`, {
+                headers: {"Authorization": `Bearer ${token}`}
             });
             if (response.ok) {
                 const offices = await response.json();
@@ -44,8 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
         resultsTableBody.innerHTML = `<tr><td colspan="2">Loading results...</td></tr>`;
 
         try {
-            const response = await fetch(`http://localhost:8000/results/${officeCode}`, {
-                headers: { "Authorization": `Bearer ${token}` }
+            const response = await fetch(`${API_BASE}/results/${officeCode}`, {
+                headers: {"Authorization": `Bearer ${token}`}
             });
 
             if (response.ok) {
