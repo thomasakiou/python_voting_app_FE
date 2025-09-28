@@ -36,9 +36,10 @@
 <div class="votes-list">
     <h2>All Users</h2>
     <div class="all-users">
-        <button id="loadUsers">Load Users</button>
+        <button id="loadUsers" class="mt-5">Load Users</button>
+        <button id="exportUsersPDF" class="mt-5">📄 Export Voters to PDF</button>
         <!-- Upload button -->
-        <label for="uploadFile" class="upload-btn">
+        <label for="uploadFile" class="upload-btn mt-5">
             <span>📤</span>
             <input type="file" id="uploadFile" style="display:none">
         </label>
@@ -99,6 +100,8 @@
 <!--<script src="../js/admin.js"></script>-->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 <script type="module" src="../js/user.js"></script>
 <script src="../js/logout.js"></script>
 </body>

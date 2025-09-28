@@ -232,6 +232,61 @@ document.addEventListener("DOMContentLoaded", async () => {
     // ✅ Attach event to "Load Users" button
     loadUsersBtn.addEventListener("click", loadUsers);
 
+
+
+    // ✅ Export Users table to PDF (only voters, exclude last two columns)
+    document.getElementById("exportUsersPDF").addEventListener("click", () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        const title = "Users Report - Voters Only";
+        doc.text(title, 14, 15);
+
+        // Get table
+        const table = document.getElementById("usersTable");
+        const rows = Array.from(table.querySelectorAll("tbody tr"));
+
+        // Remove the last two columns from headers
+        const headCells = Array.from(table.querySelectorAll("thead tr th"))
+            .slice(0, -2) // remove last two columns
+            .map((th) => th.textContent);
+
+        // Add S/No as the first column header
+        const head = [["S/No", ...headCells]];
+
+        let serial = 1; // ✅ independent counter
+
+        // Build body with serial number, only "voter" rows, skip last two columns
+        const body = rows
+            .map((tr) => {
+                const cells = Array.from(tr.querySelectorAll("td")).slice(0, -2); // remove last two columns
+                const rowValues = cells.map((td) => td.textContent);
+
+                // Get role (before slicing last two, role should have been second-to-last column)
+                const allCells = Array.from(tr.querySelectorAll("td")).map((td) => td.textContent);
+                const role = allCells[allCells.length - 2]; // second-to-last column
+
+                if (role.toLowerCase() === "voter") {
+                    return [serial++, ...rowValues]; // ✅ increment only when voter row passes
+                }
+                return null;
+            })
+            .filter((row) => row !== null);
+
+        // Render table
+        doc.autoTable({
+            head: head,
+            body: body,
+            startY: 25,
+            theme: "grid",
+            headStyles: { fillColor: [41, 128, 185] },
+        });
+
+        // Save PDF
+        const safeFilename = title.replace(/\s+/g, "_");
+        doc.save(`${safeFilename}.pdf`);
+    });
+
 });
 
 

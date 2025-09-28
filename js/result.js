@@ -85,4 +85,61 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Initial load
     loadOffices();
+
+
+
+    document.getElementById("exportResultsPDF").addEventListener("click", () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // ✅ Detect filter (office dropdown)
+        const officeDropdown = document.getElementById("officeDropdown");
+        let selectedOfficeText = "";
+        if (officeDropdown && officeDropdown.selectedIndex > -1) {
+            selectedOfficeText = officeDropdown.options[officeDropdown.selectedIndex].text;
+        }
+
+        // Build dynamic title
+        let title = "Results Report";
+        if (selectedOfficeText) {
+            title = `Office of ${selectedOfficeText} Result`;
+        }
+
+        doc.text(title, 14, 15);
+
+        // ✅ Get table
+        const table = document.getElementById("resultsTable");
+        if (!table) {
+            alert("Results table not found.");
+            return;
+        }
+
+        const rows = Array.from(table.querySelectorAll("tbody tr"));
+        let headCells = Array.from(table.querySelectorAll("thead tr th")).map(
+            (th) => th.textContent
+        );
+
+        const head = [["S/No", ...headCells]];
+
+        // Body rows (keep all columns)
+        const body = rows.map((tr, i) => {
+            const cells = Array.from(tr.querySelectorAll("td")).map((td) => td.textContent);
+            return [i + 1, ...cells];
+        });
+
+        // Generate PDF
+        doc.autoTable({
+            head: head,
+            body: body,
+            startY: 25,
+            theme: "grid",
+            headStyles: { fillColor: [41, 128, 185] },
+        });
+
+        // Safe filename also matches the header
+        const safeFilename = title.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9-_]/g, "");
+        doc.save(`${safeFilename}.pdf`);
+    });
+
+
 });

@@ -58,8 +58,11 @@
     </div>
 
 
+    <div class="all-users">
+        <button id="loadVotes" class="mt-5">Load Votes</button>
+        <button id="exportPDF" class="mt-5">📄 Export Votes to PDF</button>
+    </div>
 
-    <button id="loadVotes" class="mt-5">Load Votes</button>
     <table id="votesTable">
         <thead>
         <tr>
@@ -75,5 +78,7 @@
 
 <script type="module" src="../js/admin.js"></script>
 <script src="../js/logout.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 </body>
 </html>

@@ -137,6 +137,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+
     // Save or update candidate
     saveBtn.addEventListener("click", async () => {
         const candidateCode = inputCandidateCode.value.trim();
@@ -197,6 +198,47 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Initial load
     loadOffices();
     loadCandidates();
+
+
+
+    // ✅ Export candidates table to PDF with S/No + dynamic filename
+    document.getElementById("exportCandidatesPDF").addEventListener("click", () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        const title = "Candidates Report";
+        doc.text(title, 14, 15);
+
+        const table = document.getElementById("candidatesTable");
+        const rows = Array.from(table.querySelectorAll("tbody tr"));
+        let headCells = Array.from(table.querySelectorAll("thead tr th")).map(
+            (th) => th.textContent
+        );
+
+        // ❌ Remove last column from head
+        headCells = headCells.slice(0, -1);
+
+        const head = [["S/No", ...headCells]];
+
+        // Build body without last column
+        const body = rows.map((tr, i) => {
+            const cells = Array.from(tr.querySelectorAll("td")).map((td) => td.textContent);
+            cells.pop(); // ❌ remove last column
+            return [i + 1, ...cells];
+        });
+
+        doc.autoTable({
+            head: head,
+            body: body,
+            startY: 25,
+            theme: "grid",
+            headStyles: { fillColor: [41, 128, 185] },
+        });
+
+        const safeFilename = title.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9-_]/g, "");
+        doc.save(`${safeFilename}.pdf`);
+    });
+
 });
 
 

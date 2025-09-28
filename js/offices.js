@@ -296,4 +296,55 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Initial load
     loadOffices();
+
+
+    // ✅ Export offices table to PDF with S/No + dynamic filename
+    document.getElementById("exportOfficesPDF").addEventListener("click", () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Static title
+        const title = "Offices Report";
+        doc.text(title, 14, 15);
+
+        // ✅ Get table
+        const table = document.getElementById("officesTable");
+        if (!table) {
+            alert("Offices table not found.");
+            return;
+        }
+
+        const rows = Array.from(table.querySelectorAll("tbody tr"));
+        let headCells = Array.from(table.querySelectorAll("thead tr th")).map(
+            (th) => th.textContent
+        );
+
+        // ❌ Remove first column (id) and last column (actions)
+        headCells = headCells.slice(1, -1);
+
+        const head = [["S/No", ...headCells]];
+
+        // Body rows (remove first + last column too)
+        const body = rows.map((tr, i) => {
+            let cells = Array.from(tr.querySelectorAll("td")).map((td) => td.textContent);
+            cells = cells.slice(1, -1); // remove first and last
+            return [i + 1, ...cells];
+        });
+
+        // Generate PDF
+        doc.autoTable({
+            head: head,
+            body: body,
+            startY: 25,
+            theme: "grid",
+            headStyles: { fillColor: [41, 128, 185] },
+        });
+
+        // Safe filename
+        const safeFilename = title.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9-_]/g, "");
+        doc.save(`${safeFilename}.pdf`);
+    });
+
+
+
 });
