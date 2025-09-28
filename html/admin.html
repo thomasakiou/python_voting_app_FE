@@ -29,13 +29,35 @@
 <div class="votes-list">
     <h2>All Votes</h2>
     <!-- ✅ Dropdown for voters -->
-    <div class="voter-select">
-        <label for="voterDropdown">Select Voter:</label>
-        <select id="voterDropdown">
-            <option value="">-- All Voters --</option>
-            <!-- Voters will be dynamically loaded here -->
-        </select>
+<!--    <div class="voter-select">-->
+<!--        <label for="voterDropdown">Select Voter:</label>-->
+<!--        <select id="voterDropdown">-->
+<!--            <option value="">&#45;&#45; All Voters &#45;&#45;</option>-->
+<!--            &lt;!&ndash; Voters will be dynamically loaded here &ndash;&gt;-->
+<!--        </select>-->
+<!--    </div>-->
+
+    <div style="display: flex; gap: 20px; align-items: center; width: 100%;">
+        <!-- Voter Dropdown -->
+        <div class="voter-select" style="flex: 1;">
+            <label for="voterDropdown">Select Voter:</label>
+            <select id="voterDropdown" style="width: 100%;">
+                <option value="">-- All Voters --</option>
+                <!-- Voters will be dynamically loaded here -->
+            </select>
+        </div>
+
+        <!-- Candidate Dropdown -->
+        <div class="candidate-select" style="flex: 1;">
+            <label for="candidateDropdown">Select Candidate:</label>
+            <select id="candidateDropdown" style="width: 100%;">
+                <option value="">-- All Candidates --</option>
+                <!-- Candidates will be dynamically loaded here -->
+            </select>
+        </div>
     </div>
+
+
 
     <button id="loadVotes" class="mt-5">Load Votes</button>
     <table id="votesTable">
@@ -43,7 +65,7 @@
         <tr>
             <th>ID</th>
             <th>Voter</th>
-            <th>Candidate Voted For</th>
+            <th>Candidate</th>
             <th>Office Voted For</th>
         </tr>
         </thead>
