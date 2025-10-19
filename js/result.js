@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Load offices into dropdown
     async function loadOffices() {
         try {
-            const response = await fetch(`${API_BASE}/offices/`, {
+            const response = await fetch(`${API_BASE}/api/offices/`, {
                 headers: {"Authorization": `Bearer ${token}`}
             });
             if (response.ok) {

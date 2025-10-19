@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await configReady;
 
     try {
-        const response = await fetch(`${API_BASE}/offices`, {
+        const response = await fetch(`${API_BASE}/api/offices`, {
             headers: { "Authorization": "Bearer " + token }
         });
 
@@ -41,7 +41,7 @@ document.getElementById("office_code").addEventListener("change", async (e) => {
     const token = localStorage.getItem("access_token");
 
     try {
-        const response = await fetch(`${API_BASE}/candidates/${officeCode}/candidates`, {
+        const response = await fetch(`${API_BASE}/api/candidates/${officeCode}/candidates`, {
             headers: { "Authorization": "Bearer " + token }
         });
 
@@ -77,7 +77,7 @@ document.getElementById("voteForm").addEventListener("submit", async (e) => {
     }
 
     try {
-        const response = await fetch(`${API_BASE}/votes/`, {
+        const response = await fetch(`${API_BASE}/api/votes/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

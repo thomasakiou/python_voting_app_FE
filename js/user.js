@@ -1,76 +1,3 @@
-// // ========================
-// // GET ALL USERS (ADMIN ONLY)
-// // ========================
-// document.getElementById("loadUsers").addEventListener("click", async () => {
-//     const token = localStorage.getItem("access_token");
-//     const tbody = document.querySelector("#usersTable tbody");
-//     tbody.innerHTML = "";
-//
-//     if (!token) {
-//         alert("You must log in first.");
-//         return;
-//     }
-//
-//     try {
-//         const response = await fetch("http://localhost:8000/users/", {
-//             method: "GET",
-//             headers: { "Authorization": "Bearer " + token }
-//         });
-//
-//         if (response.ok) {
-//             const users = await response.json();
-//             if (users.length === 0) {
-//                 tbody.innerHTML = `<tr><td colspan="5">No users found.</td></tr>`;
-//             } else {
-//                 users.forEach(user => {
-//                     const row = document.createElement("tr");
-//                     row.innerHTML = `
-//                         <td>${user.username}</td>
-//                         <td>${user.full_name}</td>
-//                         <td>${user.phone}</td>
-//                         <td>${user.role}</td>
-//                         <td style="display: flex; gap: 8px;">
-//                             <button class="btn btn-danger btn-sm delete-user-btn" data-id="${user.id}">Delete</button>
-//                             <button class="btn btn-primary btn-sm update-user-btn" data-id="${user.id}">Update</button>
-//                         </td>
-//                     `;
-//                     tbody.appendChild(row);
-//                 });
-//
-//                 // Attach delete listeners AFTER rows are added
-//                 tbody.querySelectorAll(".delete-user-btn").forEach(btn => {
-//                     btn.addEventListener("click", async (e) => {
-//                         const userId = e.target.dataset.id;
-//                         if (!confirm("Are you sure you want to delete this user?")) return;
-//
-//                         try {
-//                             const response = await fetch(`http://localhost:8000/users/${userId}`, {
-//                                 method: "DELETE",
-//                                 headers: { "Authorization": `Bearer ${token}` }
-//                             });
-//
-//                             if (response.ok) {
-//                                 alert("User deleted successfully!");
-//                                 document.getElementById("loadUsers").click(); // Refresh table
-//                             } else {
-//                                 const error = await response.json();
-//                                 alert(error.detail || "Failed to delete user.");
-//                             }
-//                         } catch (err) {
-//                             console.error("Network error while deleting user.", err);
-//                             alert("Network error while deleting user.");
-//                         }
-//                     });
-//                 });
-//             }
-//         } else {
-//             const error = await response.json();
-//             alert(error.detail || "Failed to load users.");
-//         }
-//     } catch (err) {
-//         alert("Network error.");
-//     }
-// });
 import {API_BASE, configReady} from "./config.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -94,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         formData.append("file", file);
 
         try {
-            const response = await fetch(`${API_BASE}/users/upload-csv`, {
+            const response = await fetch(`${API_BASE}/api/users/upload-csv`, {
                 method: "POST",
                 headers: {
                     "Authorization": "Bearer " + token
@@ -139,7 +66,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         tbody.innerHTML = "";
 
         try {
-            const response = await fetch(`${API_BASE}/users/`, {
+            const response = await fetch(`${API_BASE}/api/users/`, {
                 method: "GET",
                 headers: {"Authorization": "Bearer " + token}
             });

@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!confirm(`Are you sure you want to reset password for "${username}"?`)) return;
 
         try {
-            const response = await fetch(`${API_BASE}/reset-password/${username}`, {
+            const response = await fetch(`${API_BASE}/api/reset-password/${username}`, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,

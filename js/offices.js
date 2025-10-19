@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         // await configReady;
         tbody.innerHTML = "";
         try {
-            const response = await fetch(`${API_BASE}/offices/`, {
+            const response = await fetch(`${API_BASE}/api/offices/`, {
                 headers: {"Authorization": `Bearer ${token}`}
             });
 
