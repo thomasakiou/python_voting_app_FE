@@ -34,7 +34,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     // const API_BASE = getApiBase();
     // console.log(API_BASE);
 
-    const response = await fetch(`${API_BASE}/api/login`, {
+    const response = await fetch(`${API_BASE}/login`, {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
