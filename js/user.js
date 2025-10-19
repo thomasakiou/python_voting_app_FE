@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                             if (!confirm("Are you sure you want to delete this user?")) return;
 
                             try {
-                                const response = await fetch(`${API_BASE}/users/${userId}`, {
+                                const response = await fetch(`${API_BASE}/api/users/${userId}`, {
                                     method: "DELETE",
                                     headers: {"Authorization": `Bearer ${token}`}
                                 });
@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                             if (!confirm(`Reset password for user "${username}"?`)) return;
 
                             try {
-                                const response = await fetch(`${API_BASE}/reset-password/${username}`, {
+                                const response = await fetch(`${API_BASE}/api/reset-password/${username}`, {
                                     method: "POST",
                                     headers: {"Authorization": `Bearer ${token}`}
                                 });

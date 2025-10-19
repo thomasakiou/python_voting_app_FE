@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!token) {
         alert("You must log in first.");
-        window.location.href = "login.html";
+        window.location.href = "/index.html";
         return;
     }
 

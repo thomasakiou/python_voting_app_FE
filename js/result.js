@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         resultsTableBody.innerHTML = `<tr><td colspan="2">Loading results...</td></tr>`;
 
         try {
-            const response = await fetch(`${API_BASE}/results/${officeCode}`, {
+            const response = await fetch(`${API_BASE}/api/results/${officeCode}`, {
                 headers: {"Authorization": `Bearer ${token}`}
             });
 

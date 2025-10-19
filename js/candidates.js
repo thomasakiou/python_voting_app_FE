@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!token) {
         alert("You must log in first.");
-        window.location.href = "login.html";
+        window.location.href = "/index.html";
         return;
     }
 
@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         const candidateId = e.target.dataset.id;
                         if (!confirm("Are you sure you want to delete this candidate?")) return;
                         try {
-                            const response = await fetch(`${API_BASE}/candidates/${candidateId}`, {
+                            const response = await fetch(`${API_BASE}/api/candidates/${candidateId}`, {
                                 method: "DELETE",
                                 headers: {"Authorization": `Bearer ${token}`}
                             });
@@ -163,7 +163,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 });
             } else {
                 // Create candidate
-                response = await fetch(`${API_BASE}/candidates/`, {
+                response = await fetch(`${API_BASE}/api/candidates`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

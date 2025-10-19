@@ -75,9 +75,9 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
         // Normal redirect if not using default password
         setTimeout(() => {
             if (role === "admin" || role === "super-admin") {
-                window.location.href = "admin.html";
+                window.location.href = "html/admin.html";
             } else if (role === "voter") {
-                window.location.href = "vote.html";
+                window.location.href = "html/vote.html";
             }
         }, 500);
     } else {
@@ -101,7 +101,7 @@ document.getElementById("savePasswordBtn").addEventListener("click", async () =>
     }
 
     try {
-        const response = await fetch(`${API_BASE}/change-password`, {
+        const response = await fetch(`${API_BASE}/api/change-password`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -126,7 +126,7 @@ document.getElementById("savePasswordBtn").addEventListener("click", async () =>
 
             // Redirect to login so they re-authenticate
             localStorage.removeItem("access_token");
-            window.location.href = "login.html";
+            window.location.href = "/index.html";
         } else {
             const error = await response.json();
             alert(error.detail || "Failed to change password.");

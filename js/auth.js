@@ -3,7 +3,7 @@ function checkAuth(allowedRoles = []) {
     const token = localStorage.getItem("access_token");
     if (!token) {
         // No token → force login
-        window.location.href = "login.html";
+        window.location.href = "/index.html";
         return;
     }
 
@@ -14,7 +14,7 @@ function checkAuth(allowedRoles = []) {
 
         if (!allowedRoles.includes(role)) {
             // Wrong role → kick out
-            window.location.href = "login.html";
+            window.location.href = "/index.html";
             return;
         }
 
@@ -24,6 +24,6 @@ function checkAuth(allowedRoles = []) {
     } catch (err) {
         console.error("Invalid token:", err);
         localStorage.removeItem("access_token");
-        window.location.href = "login.html";
+        window.location.href = "/index.html";
     }
 }
