@@ -37,7 +37,7 @@
     const token = localStorage.getItem("access_token");
 
     if (!token) {
-    window.location.href = "login.html";
+    window.location.href = "index.html";
     return;
 }
 
@@ -65,7 +65,7 @@
     function logout() {
     localStorage.removeItem("access_token");
     sessionStorage.clear();
-    window.location.href = "login.html";
+    window.location.href = "index.html";
 }
 
     // ✅ Attach logout button
