@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // ✅ Load voters into dropdown
     async function loadVoters() {
         try {
-            const res = await fetch(`${API_BASE}/users/`, {
+            const res = await fetch(`${API_BASE}/api/users/`, {
                 headers: { Authorization: "Bearer " + token },
             });
             if (res.ok) {
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // ✅ Load candidates into dropdown
     async function loadCandidates() {
         try {
-            const res = await fetch(`${API_BASE}/candidates`, {
+            const res = await fetch(`${API_BASE}/api/candidates`, {
                 headers: { Authorization: "Bearer " + token },
             });
             if (res.ok) {
@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // ✅ Load votes based on dropdowns
     async function loadVotes() {
         tbody.innerHTML = "";
-        let url = `${API_BASE}/votes`;
+        let url = `${API_BASE}/api/votes`;
 
         const selectedVoterId = parseInt(voterDropdown.value);
         const selectedCandidateCode = candidateDropdown.value;
