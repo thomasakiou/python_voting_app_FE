@@ -1,5 +1,5 @@
 // config.js
-let API_BASE = "https://vmi2848672.contaboserver.net/voting";
+let API_BASE = "https://vmi2848672.contaboserver.net/voting/";
 
 async function loadConfig() {
     try {
