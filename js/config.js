@@ -1,9 +1,9 @@
 // config.js
-let API_BASE = "https://vmi2848672.contaboserver.net:8100/voting";
+let API_BASE = "https://vmi2848672.contaboserver.net/voting";
 
 async function loadConfig() {
     try {
-        const res = await fetch("https://vmi2848672.contaboserver.net:8100/voting/config");
+        const res = await fetch("https://vmi2848672.contaboserver.net/voting/config");
         if (res.ok) {
             const cfg = await res.json();
             API_BASE = cfg.api_base_url;
