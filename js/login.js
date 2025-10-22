@@ -34,7 +34,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     // const API_BASE = getApiBase();
     // console.log(API_BASE);
 
-    const response = await fetch(`${API_BASE}/api/login`, {
+    const response = await fetch(`${API_BASE}/login`, {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
@@ -101,7 +101,7 @@ document.getElementById("savePasswordBtn").addEventListener("click", async () =>
     }
 
     try {
-        const response = await fetch(`${API_BASE}/api/change-password`, {
+        const response = await fetch(`${API_BASE}/change-password`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
