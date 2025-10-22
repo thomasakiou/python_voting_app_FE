@@ -3,7 +3,7 @@ let API_BASE = "https://vmi2848672.contaboserver.net/";
 
 async function loadConfig() {
     try {
-        const res = await fetch("https://vmi2848672.contaboserver.net/config");
+        const res = await fetch("https://vmi2848672.contaboserver.net/api/config");
         if (res.ok) {
             const cfg = await res.json();
             API_BASE = cfg.api_base_url;
