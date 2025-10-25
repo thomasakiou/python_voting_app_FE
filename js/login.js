@@ -101,7 +101,7 @@ document.getElementById("savePasswordBtn").addEventListener("click", async () =>
     }
 
     try {
-        const response = await fetch(`${API_BASE}/change-password`, {
+        const response = await fetch(`${API_BASE}/api/change-password`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

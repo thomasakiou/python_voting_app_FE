@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         formData.append("file", file);
 
         try {
-            const response = await fetch(`${API_BASE}/api/users/upload-csv`, {
+            const response = await fetch(`${API_BASE}/users/upload-csv`, {
                 method: "POST",
                 headers: {
                     "Authorization": "Bearer " + token
@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         tbody.innerHTML = "";
 
         try {
-            const response = await fetch(`${API_BASE}/api/users/`, {
+            const response = await fetch(`${API_BASE}/users/`, {
                 method: "GET",
                 headers: {"Authorization": "Bearer " + token}
             });
@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                             if (!confirm("Are you sure you want to delete this user?")) return;
 
                             try {
-                                const response = await fetch(`${API_BASE}/api/users/${userId}`, {
+                                const response = await fetch(`${API_BASE}/users/${userId}`, {
                                     method: "DELETE",
                                     headers: {"Authorization": `Bearer ${token}`}
                                 });

@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Load offices into both filter and modal dropdown
     async function loadOffices() {
         try {
-            const response = await fetch(`${API_BASE}/api/offices`, {
+            const response = await fetch(`${API_BASE}/offices/`, {
                 headers: {"Authorization": `Bearer ${token}`}
             });
             if (response.ok) {
@@ -59,8 +59,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         tbody.innerHTML = "";
         const officeCode = officeDropdownFilter.value;
         const url = officeCode
-            ? `${API_BASE}/api/candidates/${officeCode}/candidates`
-            : `${API_BASE}/api/candidates`;
+            ? `${API_BASE}/candidates/${officeCode}/candidates`
+            : `${API_BASE}/candidates/`;
 
         try {
             const response = await fetch(url, {
@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         const candidateId = e.target.dataset.id;
                         if (!confirm("Are you sure you want to delete this candidate?")) return;
                         try {
-                            const response = await fetch(`${API_BASE}/api/candidates/${candidateId}`, {
+                            const response = await fetch(`${API_BASE}/candidates/${candidateId}`, {
                                 method: "DELETE",
                                 headers: {"Authorization": `Bearer ${token}`}
                             });
@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             let response;
             if (editingCandidateId) {
                 // Update candidate
-                response = await fetch(`${API_BASE}/api/candidates/${editingCandidateId}`, {
+                response = await fetch(`${API_BASE}/candidates/${editingCandidateId}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
@@ -163,7 +163,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 });
             } else {
                 // Create candidate
-                response = await fetch(`${API_BASE}/api/candidates`, {
+                response = await fetch(`${API_BASE}/candidates/`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

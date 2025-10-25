@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         // await configReady;
         tbody.innerHTML = "";
         try {
-            const response = await fetch(`${API_BASE}/api/offices/`, {
+            const response = await fetch(`${API_BASE}/offices/`, {
                 headers: {"Authorization": `Bearer ${token}`}
             });
 
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         // If editingOfficeId is set, perform update
         if (editingOfficeId) {
             try {
-                const response = await fetch(`${API_BASE}/api/offices/${editingOfficeId}`, {
+                const response = await fetch(`${API_BASE}/offices/${editingOfficeId}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         } else {
             // Create new office
             try {
-                const response = await fetch(`${API_BASE}/api/offices`, {
+                const response = await fetch(`${API_BASE}/offices/`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

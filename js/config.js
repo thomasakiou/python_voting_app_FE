@@ -44,22 +44,22 @@
 
 
 // config.js
-let API_BASE = "https://vmi2848672.contaboserver.net/api";
+let API_BASE = "https://vmi2848672.contaboserver.net/voting";
 
 async function loadConfig() {
     try {
         const res = await fetch(`${API_BASE}/config`);
         if (res.ok) {
             const cfg = await res.json();
-            // If backend gives something different, still ensure /api stays in URL
-            const url = new URL(cfg.api_base_url || API_BASE);
-            API_BASE = `${url.origin}/api`;
+            // Use the config from backend if available
+            API_BASE = cfg.api_base_url || API_BASE;
         } else {
-            API_BASE = `${window.location.origin}/api`;
+            // Keep the default voting API base
+            API_BASE = "https://vmi2848672.contaboserver.net/voting";
         }
     } catch (e) {
         console.error("Failed to load config, fallback to default:", e);
-        API_BASE = `${window.location.origin}/api`;
+        API_BASE = "https://vmi2848672.contaboserver.net/voting";
     }
 }
 
