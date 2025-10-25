@@ -25,6 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
         await configReady;
 
         try {
+            // Note: Backend doesn't implement change-password endpoint yet
+            // This is a placeholder for when the endpoint becomes available
             const response = await fetch(`${API_BASE}/api/change-password`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

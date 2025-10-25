@@ -101,6 +101,8 @@ document.getElementById("savePasswordBtn").addEventListener("click", async () =>
     }
 
     try {
+        // Note: Backend doesn't implement change-password endpoint yet (returns 404)
+        // This endpoint needs to be implemented on the backend for password changes to work
         const response = await fetch(`${API_BASE}/api/change-password`, {
             method: "POST",
             headers: {

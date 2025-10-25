@@ -1,0 +1,199 @@
+# ==============================================
+# Voting App Frontend - .gitignore
+# ==============================================
+
+# ==============================================
+# SENSITIVE & PRIVATE FILES
+# ==============================================
+
+# Configuration files with sensitive data
+config.json
+config.local.js
+.env
+.env.local
+.env.production
+.env.development
+*.config.local.*
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Credentials and API keys
+credentials.json
+secrets.json
+api-keys.txt
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Private documents and voter data
+voters.csv
+voter-list.*
+election-data.*
+*-private.*
+*-confidential.*
+*-secret.*
+
+# Test results with potentially sensitive data
+test-results/
+voting-results/
+election-results/
+*.test.log
+
+# ==============================================
+# DEVELOPMENT FILES
+# ==============================================
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ==============================================
+# BUILD & DISTRIBUTION
+# ==============================================
+
+# Build outputs
+dist/
+build/
+out/
+target/
+
+# Compiled files
+*.min.js
+*.min.css
+
+# ==============================================
+# LOGS & TEMPORARY FILES
+# ==============================================
+
+# Log files
+logs/
+*.log
+log-*.txt
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+*.tmp
+*.temp
+
+# Cache files
+.cache/
+*.cache
+
+# ==============================================
+# TESTING & DEVELOPMENT
+# ==============================================
+
+# Test coverage reports
+coverage/
+.nyc_output/
+
+# Jest
+.jest/
+
+# Screenshots from tests
+screenshots/
+test-screenshots/
+
+# Performance test results
+*.perf
+performance-*.json
+
+# ==============================================
+# SYSTEM FILES
+# ==============================================
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+
+# Linux
+*~
+.nfs*
+
+# ==============================================
+# BACKUP FILES
+# ==============================================
+
+# Backup files
+*.bak
+*.backup
+*.old
+*-backup.*
+backup-*
+
+# ==============================================
+# DOCUMENTATION (if sensitive)
+# ==============================================
+
+# Private documentation
+docs/private/
+documentation/confidential/
+README-private.md
+SETUP-private.md
+
+# ==============================================
+# CUSTOM VOTING APP EXCLUSIONS
+# ==============================================
+
+# Custom test configurations
+test-config.local.js
+voting-test-*.html
+load-test-results/
+
+# Custom voter lists
+voter-database.*
+election-*.csv
+candidate-list-private.*
+voter-passwords.js
+*-passwords.*
+
+# Custom admin files
+admin-config.*
+admin-credentials.*
+setup-local.*
+
+# Local development overrides
+*.local.html
+*-dev.js
+*-dev.css
+
+# ==============================================
+# DEPENDENCIES & PACKAGES
+# ==============================================
+
+# Bower
+bower_components/
+
+# JSPM
+jspm_packages/
+
+# ==============================================
+# END OF .GITIGNORE
+# ==============================================
