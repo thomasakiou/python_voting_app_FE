@@ -486,10 +486,34 @@
             let totalAttempts = 0;
             
             // Test different password change endpoints and formats
-            // Note: Based on testing, the backend doesn't implement password change endpoints
+            // Working password change endpoints (require authentication)
+            // First get admin token for authentication
+            const adminFormData = new URLSearchParams();
+            adminFormData.append("username", "admin");
+            adminFormData.append("password", "123456");
+            
+            let adminToken = null;
+            try {
+                const adminResponse = await fetch(`${API_BASE}/login`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: adminFormData
+                });
+                if (adminResponse.ok) {
+                    const adminData = await adminResponse.json();
+                    adminToken = adminData.access_token;
+                    log("✅ Got admin authentication for password changes", 'success');
+                } else {
+                    log("❌ Failed to get admin authentication", 'error');
+                }
+            } catch (error) {
+                log("❌ Error getting admin authentication", 'error');
+            }
+            
             const endpoints = [
-                { url: `${API_BASE}/change-password`, contentType: "application/json", formatData: (username, oldPass, newPass) => JSON.stringify({username, old_password: oldPass, new_password: newPass}) },
-                { url: `${API_BASE}/api/change-password`, contentType: "application/json", formatData: (username, oldPass, newPass) => JSON.stringify({username, old_password: oldPass, new_password: newPass}) },
+                { url: `${API_BASE}/change-password`, contentType: "application/json", formatData: (username, oldPass, newPass) => JSON.stringify({username, old_password: oldPass, new_password: newPass}), needsAuth: true },
                 { url: `${API_BASE}/users/change-password`, contentType: "application/json", formatData: (username, oldPass, newPass) => JSON.stringify({username, old_password: oldPass, new_password: newPass}) },
                 { url: `${API_BASE}/auth/change-password`, contentType: "application/json", formatData: (username, oldPass, newPass) => JSON.stringify({username, old_password: oldPass, new_password: newPass}) },
                 { url: `${API_BASE}/change-password`, contentType: "application/x-www-form-urlencoded", formatData: (username, oldPass, newPass) => `username=${encodeURIComponent(username)}&old_password=${encodeURIComponent(oldPass)}&new_password=${encodeURIComponent(newPass)}` }
@@ -511,11 +535,18 @@
                         try {
                             // Use the discovered actual password instead of "Vote@123"
                             const actualOldPassword = actualPasswords[voter] || "Vote@123";
+                            const headers = {
+                                "Content-Type": endpoint.contentType
+                            };
+                            
+                            // Add authentication if endpoint requires it
+                            if (endpoint.needsAuth && adminToken) {
+                                headers["Authorization"] = `Bearer ${adminToken}`;
+                            }
+                            
                             const response = await fetch(endpoint.url, {
                                 method: "POST",
-                                headers: {
-                                    "Content-Type": endpoint.contentType
-                                },
+                                headers: headers,
                                 body: endpoint.formatData(voter, actualOldPassword, newPassword)
                             });                        if (response.ok) {
                             log(`✅ Password changed for ${voter} using ${endpoint.url}`, 'success');
