@@ -113,11 +113,13 @@
             </label>
         </div>
         <div>
-            <button onclick="setupTestPasswords()" style="background: #ffc107; color: black; font-weight: bold;">🔐 Setup Test Passwords (Do This First!)</button>
-            <button onclick="loadOffices()">Load Offices</button>
-            <button onclick="startConcurrentVotingTest()" id="startBtn">Start Concurrent Test</button>
-            <button onclick="startSequentialVotingTest()" id="startSeqBtn">Start Sequential Test</button>
-            <button onclick="clearLogs()">Clear Logs</button>
+            <button onclick="discoverPasswords()" style="background: #17a2b8; color: white; font-weight: bold;">🔍 Discover Backend Passwords</button>
+            <button onclick="loadOffices()">📋 Load Offices</button>
+            <button onclick="testVoting()" style="background: #28a745; color: white; font-weight: bold;">�️ Test Voting (2 users)</button>
+            <button onclick="setupTestPasswords()" style="background: #ffc107; color: black;">🔐 Setup Passwords (Optional)</button>
+            <button onclick="startConcurrentVotingTest()" id="startBtn">🚀 Start Concurrent Test</button>
+            <button onclick="startSequentialVotingTest()" id="startSeqBtn">📊 Start Sequential Test</button>
+            <button onclick="clearLogs()">🧹 Clear Logs</button>
         </div>
         <div class="progress">
             <div class="progress-bar" id="progressBar"></div>
@@ -356,12 +358,129 @@
             return candidates.filter(candidate => candidate.office_code === officeCode);
         }
 
+        // Discover actual passwords for voters
+        window.discoverPasswords = async function() {
+            log("� Discovering actual backend passwords...", 'info');
+            const testPasswords = ["123456", "Vote@123", "password", "admin", "123"];
+            const testUsers = ["fel01", "fatty", "voter001", "voter002", "voter003", "voter004", "voter005"];
+            
+            for (const user of testUsers) {
+                for (const pass of testPasswords) {
+                    try {
+                        const formData = new URLSearchParams();
+                        formData.append("username", user);
+                        formData.append("password", pass);
+                        
+                        const response = await fetch(`${API_BASE}/login`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded"
+                            },
+                            body: formData
+                        });
+                        
+                        if (response.ok) {
+                            log(`✅ Found password for ${user}: ${pass}`, 'success');
+                            actualPasswords[user] = pass;
+                            break;
+                        }
+                    } catch (error) {
+                        // Continue testing
+                    }
+                }
+            }
+            log("🔍 Password discovery complete", 'info');
+        };
+
+        // Test voting with discovered passwords
+        window.testVoting = async function() {
+            log("🗳️ Testing voting with discovered passwords...", 'info');
+            
+            // Make sure we have offices and candidates loaded
+            if (!offices || offices.length === 0) {
+                log("⚠️ Please load offices first", 'warning');
+                return;
+            }
+            
+            if (!candidates || candidates.length === 0) {
+                log("⚠️ Please load candidates first", 'warning');
+                return;
+            }
+            
+            // Test voting with fel01 and fatty (known working passwords)
+            const testUsers = [
+                { username: "fel01", password: actualPasswords["fel01"] || "123456" },
+                { username: "fatty", password: actualPasswords["fatty"] || "123456" }
+            ];
+            
+            for (const user of testUsers) {
+                try {
+                    // Login
+                    const formData = new URLSearchParams();
+                    formData.append("username", user.username);
+                    formData.append("password", user.password);
+                    
+                    const loginResponse = await fetch(`${API_BASE}/login`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        body: formData
+                    });
+                    
+                    if (!loginResponse.ok) {
+                        log(`❌ Login failed for ${user.username}`, 'error');
+                        continue;
+                    }
+                    
+                    const loginData = await loginResponse.json();
+                    const token = loginData.access_token;
+                    
+                    // Try to vote
+                    const firstOffice = offices[0];
+                    const officeCandidates = candidates.filter(c => c.office_code === firstOffice.office_code);
+                    
+                    if (officeCandidates.length === 0) {
+                        log(`⚠️ No candidates found for ${firstOffice.office_code}`, 'warning');
+                        continue;
+                    }
+                    
+                    const voteResponse = await fetch(`${API_BASE}/votes/`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": "Bearer " + token
+                        },
+                        body: JSON.stringify({ 
+                            candidate_code: officeCandidates[0].candidate_code, 
+                            office_code: firstOffice.office_code 
+                        })
+                    });
+                    
+                    if (voteResponse.ok) {
+                        log(`✅ Vote successful for ${user.username} in ${firstOffice.office_code}`, 'success');
+                    } else {
+                        const errorData = await voteResponse.json().catch(() => ({}));
+                        log(`⚠️ Vote failed for ${user.username}: ${errorData.detail || 'Unknown error'}`, 'warning');
+                    }
+                    
+                } catch (error) {
+                    log(`❌ Error testing vote for ${user.username}: ${error.message}`, 'error');
+                }
+            }
+            
+            log("🗳️ Voting test complete", 'info');
+        };
+
         // Setup test passwords for voters
         window.setupTestPasswords = async function() {
-            log("🔐 Testing password change endpoints (404 errors are expected)...", 'info');
+            log("🔐 Setting up password testing...", 'info');
             const setupBtn = document.querySelector('[onclick="setupTestPasswords()"]');
             setupBtn.disabled = true;
-            setupBtn.textContent = "⏳ Testing endpoints...";
+            setupBtn.textContent = "⏳ Discovering passwords...";
+            
+            // First, discover actual passwords
+            await window.discoverPasswords();
             
             let successCount = 0;
             let totalAttempts = 0;
@@ -389,16 +508,16 @@
                 for (const endpoint of endpoints) {
                     if (changed) break;
                     
-                    try {
-                        const response = await fetch(endpoint.url, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": endpoint.contentType
-                            },
-                            body: endpoint.formatData(voter, "Vote@123", newPassword)
-                        });
-                        
-                        if (response.ok) {
+                        try {
+                            // Use the discovered actual password instead of "Vote@123"
+                            const actualOldPassword = actualPasswords[voter] || "Vote@123";
+                            const response = await fetch(endpoint.url, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": endpoint.contentType
+                                },
+                                body: endpoint.formatData(voter, actualOldPassword, newPassword)
+                            });                        if (response.ok) {
                             log(`✅ Password changed for ${voter} using ${endpoint.url}`, 'success');
                             successCount++;
                             changed = true;
@@ -436,6 +555,15 @@
             }
         };
 
+        // ACTUAL backend passwords discovered through testing
+        const actualPasswords = {
+            "fel01": "123456",      // Confirmed working
+            "fatty": "123456",      // Confirmed working  
+            "voter001": "123456",   // May work - will test during discovery
+            "voter002": "123456",   // May work - will test during discovery
+            "voter003": "123456",   // May work - will test during discovery
+        };
+        
         // Pre-generated passwords for testing (simulates password changes without API calls)
         const voterPasswords = {
             "fel01": "NewPass1!",
@@ -498,10 +626,13 @@
                 let token = null;
                 let actualPassword = voterPassword;
                 
-                // Use pre-changed password if available (simulates password change)
-                if (voterPasswords[voterUsername]) {
+                // Use actual backend password if known, otherwise try pre-generated password
+                if (actualPasswords[voterUsername]) {
+                    actualPassword = actualPasswords[voterUsername];
+                    log(`🔑 Voter ${voterIndex + 1} (${voterUsername}) using actual backend password`, 'info');
+                } else if (voterPasswords[voterUsername]) {
                     actualPassword = voterPasswords[voterUsername];
-                    log(`🔄 Voter ${voterIndex + 1} (${voterUsername}) using changed password`, 'info');
+                    log(`🔄 Voter ${voterIndex + 1} (${voterUsername}) using simulated changed password`, 'info');
                 }
                 
                 // Step 1: Login with the password

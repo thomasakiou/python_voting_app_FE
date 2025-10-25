@@ -25,11 +25,19 @@ document.addEventListener("DOMContentLoaded", () => {
         await configReady;
 
         try {
-            // Note: Backend doesn't implement change-password endpoint yet
-            // This is a placeholder for when the endpoint becomes available
+            // Get authentication token for change password request
+            const token = localStorage.getItem("access_token");
+            if (!token) {
+                messageDiv.innerHTML = `<div class="alert alert-danger">You must be logged in to change password.</div>`;
+                return;
+            }
+
             const response = await fetch(`${API_BASE}/change-password`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
                 body: JSON.stringify({ username, old_password: oldPassword, new_password: newPassword })
             });
 

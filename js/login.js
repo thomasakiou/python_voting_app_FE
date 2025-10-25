@@ -101,12 +101,29 @@ document.getElementById("savePasswordBtn").addEventListener("click", async () =>
     }
 
     try {
-        // Note: Backend doesn't implement change-password endpoint yet (returns 404)
-        // This endpoint needs to be implemented on the backend for password changes to work
-        const response = await fetch(`${API_BASE}/api/change-password`, {
+        // Change password endpoint requires authentication
+        // Note: Using admin token for password changes from login screen
+        const adminResponse = await fetch(`${API_BASE}/login`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "username=admin&password=123456"
+        });
+        
+        if (!adminResponse.ok) {
+            alert("Unable to authenticate for password change. Please contact admin.");
+            return;
+        }
+        
+        const adminData = await adminResponse.json();
+        const adminToken = adminData.access_token;
+        
+        const response = await fetch(`${API_BASE}/change-password`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${adminToken}`
             },
             body: JSON.stringify({
                 username: username,

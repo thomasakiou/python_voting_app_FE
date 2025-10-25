@@ -127,7 +127,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                             try {
                                 const response = await fetch(`${API_BASE}/api/reset-password/${username}`, {
                                     method: "POST",
-                                    headers: {"Authorization": `Bearer ${token}`}
+                                    headers: {
+                                        "Authorization": `Bearer ${token}`,
+                                        "Content-Type": "application/json"
+                                    }
                                 });
 
                                 if (response.ok) {
