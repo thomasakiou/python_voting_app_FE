@@ -1,64 +1,112 @@
+/* Responsive login styles */
+:root {
+    --bg: #f4f4f9;
+    --card-bg: #ffffff;
+    --accent: #007bff;
+    --accent-dark: #0056b3;
+    --max-card-width: 420px;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background: #f4f4f9;
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--bg);
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    padding: 1rem; /* safe area on small screens */
 }
 
 .login-container {
-    background: white;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0px 5px 20px rgba(0,0,0,0.1);
-    width: 300px;
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    width: 100%;
+    max-width: var(--max-card-width);
+    min-width: 260px;
 }
 
 h2 {
     text-align: center;
     margin-bottom: 1rem;
+    font-size: 1.25rem;
 }
 
 .input-group {
-    margin-bottom: 1rem;
+    margin-bottom: 0.9rem;
 }
 
 label {
     display: block;
-    margin-bottom: .3rem;
+    margin-bottom: 0.35rem;
+    font-size: 0.95rem;
 }
 
 input {
     width: 100%;
-    padding: .6rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: 0.75rem;
+    border: 1px solid #d0d7de;
+    border-radius: 8px;
+    font-size: 1rem;
 }
 
 button {
     width: 100%;
-    padding: .7rem;
+    padding: 0.9rem;
     border: none;
-    background: #007bff;
+    background: var(--accent);
     color: white;
-    font-size: 1rem;
-    border-radius: 5px;
+    font-size: 1.05rem;
+    border-radius: 8px;
     cursor: pointer;
+    touch-action: manipulation;
 }
 
 button:hover {
-    background: #0056b3;
+    background: var(--accent-dark);
 }
 
 #message {
-    margin-top: 1rem;
+    margin-top: 0.9rem;
     text-align: center;
+    font-size: 0.95rem;
 }
-
 
 #forgotpassword {
     cursor: pointer;
-    font-weight: lighter;
+    font-weight: 500;
+    font-size: 0.95rem;
+    display: inline-block;
+    margin-top: 0.6rem;
+}
+
+/* Modal form inputs (slightly larger on small screens) */
+.modal-body input {
+    padding: 0.7rem;
     font-size: 1rem;
+}
+
+/* Small screens tweaks */
+@media (max-width: 420px) {
+    .login-container { padding: 1rem; }
+    h2 { font-size: 1.1rem; }
+    input { padding: 0.75rem; font-size: 1rem; }
+    button { padding: 0.9rem; font-size: 1.05rem; }
+}
+
+@media (max-width: 360px) {
+    .login-container { padding: 0.85rem; }
+    h2 { font-size: 1rem; }
+    label { font-size: 0.9rem; }
+    input { padding: 0.7rem; }
+    button { padding: 0.85rem; font-size: 1rem; }
 }
