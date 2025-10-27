@@ -6,6 +6,21 @@ body {
     color: #333;
 }
 
+/* Responsive variables and improvements */
+:root {
+    --max-width: 980px;
+    --card-bg: #fff;
+    --primary: #1976d2;
+    --primary-dark: #125ea6;
+    --accent: #e74c3c;
+    --container-padding: 25px;
+}
+
+/* Ensure content doesn't hide under fixed header */
+body {
+    padding-top: 76px; /* header (60px) + small gap */
+}
+
 h2 {
     text-align: center;
     color: #222;
@@ -152,8 +167,8 @@ h2 {
 
 .vote-container {
     max-width: 600px;
-    margin: 100px auto;
-    padding: 25px;
+    margin: 40px auto;
+    padding: var(--container-padding);
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -203,14 +218,14 @@ label {
 
 select, button {
     width: 100%;
-    padding: 10px;
-    font-size: 15px;
+    padding: 12px;
+    font-size: 16px;
     border-radius: 5px;
     border: 1px solid #ccc;
 }
 
 button {
-    background: #007bff;
+    background: var(--primary);
     color: #fff;
     font-weight: bold;
     border: none;
@@ -219,7 +234,7 @@ button {
 }
 
 button:hover {
-    background: #0056b3;
+    background: var(--primary-dark);
 }
 
 #voteMessage {
@@ -386,6 +401,74 @@ label[for="officeDropdown"] {
     transition: background 0.3s ease, transform 0.2s ease;
     /*margin-left: 10px; !* space from "Load Offices" button *!*/
     user-select: none;
+}
+
+/* Small devices (phones) */
+@media (max-width: 600px) {
+    :root {
+        --container-padding: 16px;
+    }
+
+    .header-bar {
+        height: 56px;
+    }
+
+    .header-content {
+        padding: 0 12px;
+    }
+
+    .logo {
+        font-size: 18px;
+    }
+
+    .btns {
+        right: 10px;
+    }
+
+    body {
+        padding-top: 64px;
+    }
+
+    .vote-container {
+        margin: 16px;
+        padding: 16px;
+        border-radius: 10px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+    select, button {
+        font-size: 16px;
+        padding: 14px;
+    }
+
+    #logoutBtn {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+}
+
+/* Very small devices */
+@media (max-width: 380px) {
+    .logo {
+        font-size: 16px;
+    }
+
+    .vote-container {
+        margin: 12px;
+        padding: 12px;
+    }
+
+    h2 {
+        font-size: 18px;
+    }
+
+    select, button {
+        font-size: 15px;
+        padding: 12px;
+    }
 }
 
 .add-btn:hover {
