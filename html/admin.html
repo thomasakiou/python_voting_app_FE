@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Voting</title>
     <link rel="stylesheet" href="../css/vote.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -13,6 +14,7 @@
 <header class="header-bar">
     <div class="header-content">
         <h1 class="logo"></h1>
+        <button id="menuToggle" class="menu-toggle" aria-expanded="false" aria-label="Toggle menu">☰</button>
         <div class="btns">
             <a href="user.html" class="btn header-btn">Users</a>
             <a href="candidates.html" class="btn header-btn">Candidates</a>
@@ -82,3 +84,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 </body>
 </html>
+
+<script>
+    (function(){
+        const toggle = document.getElementById('menuToggle');
+        const menu = document.querySelector('.btns');
+        if (!toggle || !menu) return;
+        toggle.addEventListener('click', function(){
+            menu.classList.toggle('open');
+            const expanded = this.getAttribute('aria-expanded') === 'true';
+            this.setAttribute('aria-expanded', (!expanded).toString());
+        });
+    })();
+</script>
