@@ -17,10 +17,8 @@
 <!--</div>-->
 
 <header class="header-bar">
-    <div class="header-content">
+    <div class="header-content no-hamburger">
         <h1 class="logo">Voting System</h1>
-        <!-- Mobile menu toggle (visible on small screens) -->
-        <button id="menuToggle" class="menu-toggle" aria-expanded="false" aria-label="Toggle menu">☰</button>
         <div class="btns">
             <button id="logoutBtn" onclick="logout()">Logout</button>
         </div>
@@ -73,6 +71,7 @@
 <!-- Small script to toggle the header menu on mobile -->
 <script>
     (function(){
+        // keep script present but safely no-op for vote page (no menuToggle)
         const toggle = document.getElementById('menuToggle');
         const menu = document.querySelector('.btns');
         if (!toggle || !menu) return;

@@ -192,7 +192,7 @@ h2 {
 
 .votes-list {
     max-width: 1000px;
-    margin: 100px auto;
+    margin: 20px auto;
     padding: 25px;
     background: #fff;
     border-radius: 8px;
@@ -465,24 +465,131 @@ label[for="officeDropdown"] {
         font-size: 14px;
     }
 
-    /* Show hamburger and hide the absolute positioned buttons until toggled */
+    /* Show hamburger and position it on the right so it's easy to reach on mobile */
     .menu-toggle {
         display: block;
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1200;
     }
 
+    /* On small screens the menu becomes a dropdown under the header */
     .btns {
-        position: static;
-        display: none; /* hidden by default on small screens */
+        position: absolute;
+        top: 56px; /* just below the header */
+        left: 0;
+        right: 0;
+        display: none; /* hidden until toggled */
         width: 100%;
-        margin-top: 8px;
+        margin: 0;
         flex-direction: column;
-        gap: 8px;
+        gap: 6px;
         align-items: stretch;
+        background: #2c3e50;
+        padding: 12px;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        z-index: 1100;
     }
 
     /* When open, show the menu items */
     .btns.open {
         display: flex;
+    }
+
+    /* Make links and buttons inside the dropdown look good */
+    .btns a,
+    .btns button {
+        display: block;
+        width: 100%;
+        text-align: left;
+        padding: 10px 12px;
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 16px;
+    }
+
+    .btns a:hover,
+    .btns button:hover {
+        background: rgba(255,255,255,0.04);
+    }
+
+    /* Ensure header content is spaced (logo left, menu right) on small screens */
+    .header-content {
+        justify-content: space-between;
+    }
+
+    /* menu toggle sits above other elements so it's always clickable */
+    .menu-toggle {
+        z-index: 1101;
+    }
+
+    /* Keep action buttons close together (row) and compact like results page */
+    .all-users {
+        flex-direction: row;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    /* Override large bootstrap spacing (mt-*) so buttons stay close */
+    .all-users > * {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    .all-users button,
+    .all-users .upload-btn,
+    .all-users .add-btn {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+
+    /* Hide decorative icon spans on small screens (we'll wrap icons with .btn-icon) */
+    .btn-icon,
+    .upload-btn span,
+    .add-btn span {
+        display: none !important;
+    }
+
+    /* Exception: keep the import/upload icon visible inside the user page upload button */
+    .upload-btn .btn-icon {
+        display: inline-flex !important;
+    }
+
+    /* If a page requests no hamburger (vote page), show the .btns inline on the right */
+    .no-hamburger .menu-toggle {
+        display: none !important;
+    }
+
+    .no-hamburger .btns {
+        display: flex !important;
+        position: static !important;
+        background: transparent !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        flex-direction: row !important;
+        gap: 1rem !important;
+        align-items: center !important;
+        width: auto !important;
+    }
+
+    /* Tables: allow horizontal scrolling and reduce cell padding */
+    .votes-list {
+        overflow-x: auto;
+    }
+
+    table th, table td {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    /* For users table that previously used nowrap, allow wrapping on small screens */
+    #usersTable th,
+    #usersTable td {
+        white-space: normal;
     }
 }
 
