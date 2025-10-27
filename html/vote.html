@@ -19,9 +19,9 @@
 <header class="header-bar">
     <div class="header-content">
         <h1 class="logo">Voting System</h1>
+        <!-- Mobile menu toggle (visible on small screens) -->
+        <button id="menuToggle" class="menu-toggle" aria-expanded="false" aria-label="Toggle menu">☰</button>
         <div class="btns">
-<!--            <a href="index.html" class="btn header-btn">Home</a>-->
-<!--            <a href="vote.html" class="btn header-btn">Vote</a>-->
             <button id="logoutBtn" onclick="logout()">Logout</button>
         </div>
     </div>
@@ -69,6 +69,20 @@
 <script type="module" src="../js/vote.js"></script>
 <!--<script src="../js/auth.js"></script>-->
 <script src="../js/logout.js"></script>
+
+<!-- Small script to toggle the header menu on mobile -->
+<script>
+    (function(){
+        const toggle = document.getElementById('menuToggle');
+        const menu = document.querySelector('.btns');
+        if (!toggle || !menu) return;
+        toggle.addEventListener('click', function(){
+            menu.classList.toggle('open');
+            const expanded = this.getAttribute('aria-expanded') === 'true';
+            this.setAttribute('aria-expanded', (!expanded).toString());
+        });
+    })();
+</script>
 </body>
 </html>
 

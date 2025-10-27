@@ -131,6 +131,22 @@ h2 {
     right: 20px;
 }
 
+.menu-toggle {
+    display: none; /* shown on small screens */
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    line-height: 1;
+    padding: 6px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btns {
+    transition: all 180ms ease-in-out;
+}
+
 /* Links in header */
 .btns a {
     color: #fff;
@@ -447,6 +463,26 @@ label[for="officeDropdown"] {
     #logoutBtn {
         padding: 8px 12px;
         font-size: 14px;
+    }
+
+    /* Show hamburger and hide the absolute positioned buttons until toggled */
+    .menu-toggle {
+        display: block;
+    }
+
+    .btns {
+        position: static;
+        display: none; /* hidden by default on small screens */
+        width: 100%;
+        margin-top: 8px;
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+    }
+
+    /* When open, show the menu items */
+    .btns.open {
+        display: flex;
     }
 }
 

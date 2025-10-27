@@ -89,7 +89,7 @@ document.getElementById("voteForm").addEventListener("submit", async (e) => {
         if (response.ok) {
             const data = await response.json();
             messageEl.style.color = "green";
-            messageEl.textContent = `Vote cast successfully for ${data.candidate_name} in ${data.office_name}`;
+            messageEl.textContent = `Vote cast successfully for ${data.candidate_name} as ${data.office_name}`;
         } else {
             const error = await response.json();
             messageEl.style.color = "red";
