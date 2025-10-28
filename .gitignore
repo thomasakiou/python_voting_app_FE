@@ -15,6 +15,7 @@ config.local.js
 .env.development
 *.config.local.*
 
+
 # Database files
 *.db
 *.sqlite
@@ -38,6 +39,7 @@ election-data.*
 *-secret.*
 
 # Test results with potentially sensitive data
+test/
 test-results/
 voting-results/
 election-results/
