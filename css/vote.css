@@ -141,6 +141,8 @@ h2 {
     padding: 6px 8px;
     border-radius: 4px;
     cursor: pointer;
+    width: auto !important;   /* prevent full width */
+    height: auto;
 }
 
 .btns {
@@ -474,6 +476,7 @@ label[for="officeDropdown"] {
         transform: translateY(-50%);
         z-index: 1200;
     }
+
 
     /* On small screens the menu becomes a dropdown under the header */
     .btns {
