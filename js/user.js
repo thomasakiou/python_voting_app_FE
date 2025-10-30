@@ -95,45 +95,87 @@ document.addEventListener("DOMContentLoaded", async () => {
                         tbody.appendChild(row);
                     });
 
+                    // // ✅ Disable All Voters Button
+                    // const disableAllVotersBtn = document.getElementById("disableAllVotersBtn");
+                    // const enableAllVotersBtn = document.getElementById("enableAllVotersBtn");
+
+                    // if (disableAllVotersBtn) {
+                    // disableAllVotersBtn.addEventListener("click", async () => {
+                    //     if (!confirm("Are you sure you want to disable all voters?")) return;
+
+                    //     try {
+                    //     const response = await fetch(`${API_BASE}/users/disable-voters`, {
+                    //         method: "PATCH",
+                    //         headers: {
+                    //         "Authorization": "Bearer " + token
+                    //         }
+                    //     });
+
+                    //     if (response.ok) {
+                    //         const result = await response.json();
+                    //         alert(result.message || "All voters have been disabled.");
+
+                    //         // ✅ Update UI instantly
+                    //         document.querySelectorAll(".toggle-active-btn").forEach(btn => {
+                    //         const role = btn.closest("tr")?.querySelector(".user-role")?.textContent?.trim()?.toLowerCase();
+                    //         if (role === "voter") {
+                    //             btn.textContent = "Inactive";
+                    //             btn.classList.remove("btn-success");
+                    //             btn.classList.add("btn-secondary");
+                    //         }
+                    //         });
+                    //     } else {
+                    //         const error = await response.json();
+                    //         alert(error.detail || "Failed to disable voters.");
+                    //     }
+                    //     } catch (err) {
+                    //     console.error("Network error while disabling voters:", err);
+                    //     alert("Network error while disabling voters.");
+                    //     }
+                    // });
+                    // }
+
                     // ✅ Disable All Voters Button
-                    const disableAllVotersBtn = document.getElementById("disableAllVotersBtn");
-                    const enableAllVotersBtn = document.getElementById("enableAllVotersBtn");
+const disableAllVotersBtn = document.getElementById("disableAllVotersBtn");
+const enableAllVotersBtn = document.getElementById("enableAllVotersBtn");
 
-                    if (disableAllVotersBtn) {
-                    disableAllVotersBtn.addEventListener("click", async () => {
-                        if (!confirm("Are you sure you want to disable all voters?")) return;
+if (disableAllVotersBtn) {
+    disableAllVotersBtn.addEventListener("click", async () => {
+        if (!confirm("Are you sure you want to disable all voters?")) return;
 
-                        try {
-                        const response = await fetch(`${API_BASE}/users/disable-voters`, {
-                            method: "PATCH",
-                            headers: {
-                            "Authorization": "Bearer " + token
-                            }
-                        });
+        try {
+            const response = await fetch(`${API_BASE}/users/disable-voters`, {
+                method: "PATCH",
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            });
 
-                        if (response.ok) {
-                            const result = await response.json();
-                            alert(result.message || "All voters have been disabled.");
+            if (response.ok) {
+                const result = await response.json();
+                alert(result.message || "All voters have been disabled.");
 
-                            // ✅ Update UI instantly
-                            document.querySelectorAll(".toggle-active-btn").forEach(btn => {
-                            const role = btn.closest("tr")?.querySelector(".user-role")?.textContent?.trim()?.toLowerCase();
-                            if (role === "voter") {
-                                btn.textContent = "Inactive";
-                                btn.classList.remove("btn-success");
-                                btn.classList.add("btn-secondary");
-                            }
-                            });
-                        } else {
-                            const error = await response.json();
-                            alert(error.detail || "Failed to disable voters.");
-                        }
-                        } catch (err) {
-                        console.error("Network error while disabling voters:", err);
-                        alert("Network error while disabling voters.");
-                        }
-                    });
+                // ✅ Update individual user buttons
+                document.querySelectorAll(".toggle-active-btn").forEach(btn => {
+                    const role = btn.closest("tr")?.querySelector(".user-role")?.textContent?.trim()?.toLowerCase();
+                    if (role === "voter") {
+                        btn.textContent = "Inactive";
+                        btn.classList.remove("btn-success");
+                        btn.classList.add("btn-secondary");
                     }
+                });
+            } else {
+                const error = await response.json();
+                alert(error.detail || "Failed to disable voters.");
+            }
+        } catch (err) {
+            console.error("Network error while disabling voters:", err);
+            alert("Network error while disabling voters.");
+        }
+    });
+}
+
+
 
                     // ✅ Enable All Voters Button
                     if (enableAllVotersBtn) {
@@ -237,31 +279,31 @@ document.addEventListener("DOMContentLoaded", async () => {
                     // });
 
 
-                    // // ✅ Delete User
-                    // tbody.querySelectorAll(".delete-user-btn").forEach(btn => {
-                    //     btn.addEventListener("click", async (e) => {
-                    //         const userId = e.target.dataset.id;
-                    //         if (!confirm("Are you sure you want to delete this user?")) return;
+                    // ✅ Delete User
+                    tbody.querySelectorAll(".delete-user-btn").forEach(btn => {
+                        btn.addEventListener("click", async (e) => {
+                            const userId = e.target.dataset.id;
+                            if (!confirm("Are you sure you want to delete this user?")) return;
 
-                    //         try {
-                    //             const response = await fetch(`${API_BASE}/users/${userId}`, {
-                    //                 method: "DELETE",
-                    //                 headers: {"Authorization": `Bearer ${token}`}
-                    //             });
+                            try {
+                                const response = await fetch(`${API_BASE}/users/${userId}`, {
+                                    method: "DELETE",
+                                    headers: {"Authorization": `Bearer ${token}`}
+                                });
 
-                    //             if (response.ok) {
-                    //                 alert("User deleted successfully!");
-                    //                 loadUsers(); // Refresh table
-                    //             } else {
-                    //                 const error = await response.json();
-                    //                 alert(error.detail || "Failed to delete user.");
-                    //             }
-                    //         } catch (err) {
-                    //             console.error("Network error while deleting user.", err);
-                    //             alert("Network error while deleting user.");
-                    //         }
-                    //     });
-                    // });
+                                if (response.ok) {
+                                    alert("User deleted successfully!");
+                                    loadUsers(); // Refresh table
+                                } else {
+                                    const error = await response.json();
+                                    alert(error.detail || "Failed to delete user.");
+                                }
+                            } catch (err) {
+                                console.error("Network error while deleting user.", err);
+                                alert("Network error while deleting user.");
+                            }
+                        });
+                    });
 
                     // ✅ Reset Password
                     tbody.querySelectorAll(".reset-user-btn").forEach(btn => {
