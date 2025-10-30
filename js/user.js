@@ -107,8 +107,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         const response = await fetch(`${API_BASE}/users/disable-voters`, {
                             method: "PATCH",
                             headers: {
-                            "Authorization": `Bearer ${token}`,
-                            "Content-Type": "application/json"
+                            "Authorization": "Bearer " + token
                             }
                         });
 
