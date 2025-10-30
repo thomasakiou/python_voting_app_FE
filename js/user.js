@@ -87,10 +87,41 @@ document.addEventListener("DOMContentLoaded", async () => {
                                 <button class="btn btn-danger btn-sm delete-user-btn" data-id="${user.id}">Delete</button>
                                 <button class="btn btn-primary btn-sm update-user-btn" data-id="${user.id}">Update</button>
                                 <button class="btn btn-warning btn-sm reset-user-btn" data-username="${user.username}">Reset</button>
+                                <button class="btn btn-sm ${statusClass} toggle-active-btn" data-id="${user.id}">${statusText}</button>
                             </td>
                         `;
                         tbody.appendChild(row);
                     });
+
+                    // ✅ Toggle Active/Inactive
+                    tbody.querySelectorAll(".toggle-active-btn").forEach(btn => {
+                        btn.addEventListener("click", async (e) => {
+                            const userId = e.target.dataset.id;
+                            try {
+                                const response = await fetch(`${API_BASE}/users/toggle_active_user/${userId}`, {
+                                    method: "PUT",
+                                    headers: {
+                                        "Authorization": `Bearer ${token}`,
+                                        "Content-Type": "application/json"
+                                    }
+                                });
+
+                                if (response.ok) {
+                                    const result = await response.json();
+                                    alert(result.message || "User status updated successfully!");
+                                    loadUsers(); // refresh table
+                                } else {
+                                    const error = await response.json();
+                                    alert(error.detail || "Failed to toggle user status.");
+                                }
+                            } catch (err) {
+                                console.error("Network error while toggling user status.", err);
+                                alert("Network error while toggling user status.");
+                            }
+                        });
+                    });
+
+
 
                     // ✅ Delete User
                     tbody.querySelectorAll(".delete-user-btn").forEach(btn => {
