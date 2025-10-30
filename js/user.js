@@ -78,6 +78,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 } else {
                     users.forEach(user => {
                         const row = document.createElement("tr");
+                        const statusClass = user.is_active ? "btn-success" : "btn-secondary";
+                        const statusText = user.is_active ? "Active" : "Inactive";
                         row.innerHTML = `
                             <td>${user.username}</td>
                             <td>${user.full_name}</td>
