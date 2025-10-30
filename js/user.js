@@ -134,7 +134,26 @@ document.addEventListener("DOMContentLoaded", async () => {
                         });
                     });
 
+                    // ✅ Disable All Voters        
+                    document.getElementById('disableVotersBtn').addEventListener('click', async () => {
+                    if (!confirm('Are you sure you want to disable all voters?')) return;
 
+                    try {
+                        const response = await fetch(`${API_BASE}/users/disable-voters`, {  // adjust URL to your route
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            // 'Authorization': 'Bearer ' + localStorage.getItem('token')  // if auth is required
+                        }
+                        });
+
+                        const data = await response.json();
+                        alert(data.message);
+                    } catch (error) {
+                        alert('Error disabling voters');
+                        console.error(error);
+                    }
+                    });
 
 
                     // ✅ Delete User
