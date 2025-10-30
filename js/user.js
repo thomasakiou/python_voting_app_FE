@@ -155,6 +155,8 @@ if (disableAllVotersBtn) {
                 const result = await response.json();
                 alert(result.message || "All voters have been disabled.");
 
+                 location.reload();
+
                 // ✅ Update individual user buttons
                 document.querySelectorAll(".toggle-active-btn").forEach(btn => {
                     const role = btn.closest("tr")?.querySelector(".user-role")?.textContent?.trim()?.toLowerCase();
@@ -194,6 +196,8 @@ if (disableAllVotersBtn) {
                         if (response.ok) {
                             const result = await response.json();
                             alert(result.message || "All voters have been enabled.");
+
+                             location.reload();
 
                             // ✅ Update UI instantly
                             document.querySelectorAll(".toggle-active-btn").forEach(btn => {
