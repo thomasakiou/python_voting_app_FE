@@ -97,19 +97,30 @@ document.addEventListener("DOMContentLoaded", async () => {
                     tbody.querySelectorAll(".toggle-active-btn").forEach(btn => {
                         btn.addEventListener("click", async (e) => {
                             const userId = e.target.dataset.id;
+                            const button = e.target;
+                            const currentlyActive = button.textContent.trim() === "Active";
+                            const newStatus = !currentlyActive; // toggle
+
                             try {
-                                const response = await fetch(`${API_BASE}/users/toggle_active_user/${userId}`, {
-                                    method: "PUT",
-                                    headers: {
-                                        "Authorization": `Bearer ${token}`,
-                                        "Content-Type": "application/json"
+                                const response = await fetch(
+                                    `${API_BASE}/users/${userId}/status?is_active=${newStatus}`,
+                                    {
+                                        method: "PATCH",
+                                        headers: {
+                                            "Authorization": `Bearer ${token}`,
+                                            "Content-Type": "application/json"
+                                        }
                                     }
-                                });
+                                );
 
                                 if (response.ok) {
                                     const result = await response.json();
-                                    alert(result.message || "User status updated successfully!");
-                                    loadUsers(); // refresh table
+                                    alert(result.message || `User is now ${newStatus ? "Active" : "Inactive"}`);
+
+                                    // ✅ Update button instantly (no reload)
+                                    button.textContent = newStatus ? "Active" : "Inactive";
+                                    button.classList.toggle("btn-success", newStatus);
+                                    button.classList.toggle("btn-secondary", !newStatus);
                                 } else {
                                     const error = await response.json();
                                     alert(error.detail || "Failed to toggle user status.");
@@ -120,6 +131,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                             }
                         });
                     });
+
 
 
 
