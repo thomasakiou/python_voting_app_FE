@@ -97,45 +97,85 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                     // ✅ Disable All Voters Button
                     const disableAllVotersBtn = document.getElementById("disableAllVotersBtn");
+                    const enableAllVotersBtn = document.getElementById("enableAllVotersBtn");
 
                     if (disableAllVotersBtn) {
-                        disableAllVotersBtn.addEventListener("click", async () => {
-                            if (!confirm("Are you sure you want to disable all voters?")) return;
+                    disableAllVotersBtn.addEventListener("click", async () => {
+                        if (!confirm("Are you sure you want to disable all voters?")) return;
 
-                            try {
-                                const response = await fetch(`${API_BASE}/users/disable-voters`, {
-                                    method: "PATCH",
-                                    headers: {
-                                        "Authorization": `Bearer ${token}`,
-                                        "Content-Type": "application/json"
-                                    }
-                                });
-
-                                if (response.ok) {
-                                    const result = await response.json();
-                                    alert(result.message || "All voters have been disabled.");
-
-                                    // ✅ Optionally update UI instantly
-                                    document.querySelectorAll(".toggle-active-btn").forEach(btn => {
-                                        const role = btn.closest("tr")?.querySelector(".user-role")?.textContent?.trim()?.toLowerCase();
-                                        if (role === "voter") {
-                                            btn.textContent = "Inactive";
-                                            btn.classList.remove("btn-success");
-                                            btn.classList.add("btn-secondary");
-                                        }
-                                    });
-                                } else {
-                                    const error = await response.json();
-                                    alert(error.detail || "Failed to disable voters.");
-                                }
-                            } catch (err) {
-                                console.error("Network error while disabling voters:", err);
-                                alert("Network error while disabling voters.");
+                        try {
+                        const response = await fetch(`${API_BASE}/users/disable-voters`, {
+                            method: "PATCH",
+                            headers: {
+                            "Authorization": `Bearer ${token}`,
+                            "Content-Type": "application/json"
                             }
                         });
+
+                        if (response.ok) {
+                            const result = await response.json();
+                            alert(result.message || "All voters have been disabled.");
+
+                            // ✅ Update UI instantly
+                            document.querySelectorAll(".toggle-active-btn").forEach(btn => {
+                            const role = btn.closest("tr")?.querySelector(".user-role")?.textContent?.trim()?.toLowerCase();
+                            if (role === "voter") {
+                                btn.textContent = "Inactive";
+                                btn.classList.remove("btn-success");
+                                btn.classList.add("btn-secondary");
+                            }
+                            });
+                        } else {
+                            const error = await response.json();
+                            alert(error.detail || "Failed to disable voters.");
+                        }
+                        } catch (err) {
+                        console.error("Network error while disabling voters:", err);
+                        alert("Network error while disabling voters.");
+                        }
+                    });
                     }
 
-                    
+                    // ✅ Enable All Voters Button
+                    if (enableAllVotersBtn) {
+                    enableAllVotersBtn.addEventListener("click", async () => {
+                        if (!confirm("Are you sure you want to enable all voters?")) return;
+
+                        try {
+                        const response = await fetch(`${API_BASE}/users/enable-voters`, {
+                            method: "PATCH",
+                            headers: {
+                            "Authorization": `Bearer ${token}`,
+                            "Content-Type": "application/json"
+                            }
+                        });
+
+                        if (response.ok) {
+                            const result = await response.json();
+                            alert(result.message || "All voters have been enabled.");
+
+                            // ✅ Update UI instantly
+                            document.querySelectorAll(".toggle-active-btn").forEach(btn => {
+                            const role = btn.closest("tr")?.querySelector(".user-role")?.textContent?.trim()?.toLowerCase();
+                            if (role === "voter") {
+                                btn.textContent = "Active";
+                                btn.classList.add("btn-success");
+                                btn.classList.remove("btn-secondary");
+                            }
+                            });
+                        } else {
+                            const error = await response.json();
+                            alert(error.detail || "Failed to enable voters.");
+                        }
+                        } catch (err) {
+                        console.error("Network error while enabling voters:", err);
+                        alert("Network error while enabling voters.");
+                        }
+                    });
+                    }
+
+
+
 
                     // ✅ Toggle Active/Inactive
                     tbody.querySelectorAll(".toggle-active-btn").forEach(btn => {
