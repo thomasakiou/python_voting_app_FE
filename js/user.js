@@ -135,92 +135,94 @@ document.addEventListener("DOMContentLoaded", async () => {
                         });
                     }
 
-                    // // ✅ Toggle Active/Inactive
-                    // tbody.querySelectorAll(".toggle-active-btn").forEach(btn => {
-                    //     btn.addEventListener("click", async (e) => {
-                    //         const userId = e.target.dataset.id;
-                    //         const button = e.target;
-                    //         const currentlyActive = button.textContent.trim() === "Active";
-                    //         const newStatus = !currentlyActive; // toggle
+                    
 
-                    //         try {
-                    //             const response = await fetch(
-                    //                 `${API_BASE}/users/${userId}/status?is_active=${newStatus}`,
-                    //                 {
-                    //                     method: "PATCH",
-                    //                     headers: {
-                    //                         "Authorization": `Bearer ${token}`,
-                    //                         "Content-Type": "application/json"
-                    //                     }
-                    //                 }
-                    //             );
-
-                    //             if (response.ok) {
-                    //                 const result = await response.json();
-                    //                 alert(result.message || `User is now ${newStatus ? "Active" : "Inactive"}`);
-
-                    //                 // ✅ Update button instantly (no reload)
-                    //                 button.textContent = newStatus ? "Active" : "Inactive";
-                    //                 button.classList.toggle("btn-success", newStatus);
-                    //                 button.classList.toggle("btn-secondary", !newStatus);
-                    //             } else {
-                    //                 const error = await response.json();
-                    //                 alert(error.detail || "Failed to toggle user status.");
-                    //             }
-                    //         } catch (err) {
-                    //             console.error("Network error while toggling user status.", err);
-                    //             alert("Network error while toggling user status.");
-                    //         }
-                    //     });
-                    // });
-
-                    // ✅ Disable All Voters        
-                    document.getElementById('disableVotersBtn').addEventListener('click', async () => {
-                    if (!confirm('Are you sure you want to disable all voters?')) return;
-
-                    try {
-                        const response = await fetch(`${API_BASE}/users/disable-voters`, {  // adjust URL to your route
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            // 'Authorization': 'Bearer ' + localStorage.getItem('token')  // if auth is required
-                        }
-                        });
-
-                        const data = await response.json();
-                        alert(data.message);
-                    } catch (error) {
-                        alert('Error disabling voters');
-                        console.error(error);
-                    }
-                    });
-
-
-                    // ✅ Delete User
-                    tbody.querySelectorAll(".delete-user-btn").forEach(btn => {
+                    // ✅ Toggle Active/Inactive
+                    tbody.querySelectorAll(".toggle-active-btn").forEach(btn => {
                         btn.addEventListener("click", async (e) => {
                             const userId = e.target.dataset.id;
-                            if (!confirm("Are you sure you want to delete this user?")) return;
+                            const button = e.target;
+                            const currentlyActive = button.textContent.trim() === "Active";
+                            const newStatus = !currentlyActive; // toggle
 
                             try {
-                                const response = await fetch(`${API_BASE}/users/${userId}`, {
-                                    method: "DELETE",
-                                    headers: {"Authorization": `Bearer ${token}`}
-                                });
+                                const response = await fetch(
+                                    `${API_BASE}/users/${userId}/status?is_active=${newStatus}`,
+                                    {
+                                        method: "PATCH",
+                                        headers: {
+                                            "Authorization": `Bearer ${token}`,
+                                            "Content-Type": "application/json"
+                                        }
+                                    }
+                                );
 
                                 if (response.ok) {
-                                    alert("User deleted successfully!");
-                                    loadUsers(); // Refresh table
+                                    const result = await response.json();
+                                    alert(result.message || `User is now ${newStatus ? "Active" : "Inactive"}`);
+
+                                    // ✅ Update button instantly (no reload)
+                                    button.textContent = newStatus ? "Active" : "Inactive";
+                                    button.classList.toggle("btn-success", newStatus);
+                                    button.classList.toggle("btn-secondary", !newStatus);
                                 } else {
                                     const error = await response.json();
-                                    alert(error.detail || "Failed to delete user.");
+                                    alert(error.detail || "Failed to toggle user status.");
                                 }
                             } catch (err) {
-                                console.error("Network error while deleting user.", err);
-                                alert("Network error while deleting user.");
+                                console.error("Network error while toggling user status.", err);
+                                alert("Network error while toggling user status.");
                             }
                         });
                     });
+
+                    // ✅ Disable All Voters        
+                    // document.getElementById('disableVotersBtn').addEventListener('click', async () => {
+                    // if (!confirm('Are you sure you want to disable all voters?')) return;
+
+                    // try {
+                    //     const response = await fetch(`${API_BASE}/users/disable-voters`, {  // adjust URL to your route
+                    //     method: 'PATCH',
+                    //     headers: {
+                    //         'Content-Type': 'application/json',
+                    //         // 'Authorization': 'Bearer ' + localStorage.getItem('token')  // if auth is required
+                    //     }
+                    //     });
+
+                    //     const data = await response.json();
+                    //     alert(data.message);
+                    // } catch (error) {
+                    //     alert('Error disabling voters');
+                    //     console.error(error);
+                    // }
+                    // });
+
+
+                    // // ✅ Delete User
+                    // tbody.querySelectorAll(".delete-user-btn").forEach(btn => {
+                    //     btn.addEventListener("click", async (e) => {
+                    //         const userId = e.target.dataset.id;
+                    //         if (!confirm("Are you sure you want to delete this user?")) return;
+
+                    //         try {
+                    //             const response = await fetch(`${API_BASE}/users/${userId}`, {
+                    //                 method: "DELETE",
+                    //                 headers: {"Authorization": `Bearer ${token}`}
+                    //             });
+
+                    //             if (response.ok) {
+                    //                 alert("User deleted successfully!");
+                    //                 loadUsers(); // Refresh table
+                    //             } else {
+                    //                 const error = await response.json();
+                    //                 alert(error.detail || "Failed to delete user.");
+                    //             }
+                    //         } catch (err) {
+                    //             console.error("Network error while deleting user.", err);
+                    //             alert("Network error while deleting user.");
+                    //         }
+                    //     });
+                    // });
 
                     // ✅ Reset Password
                     tbody.querySelectorAll(".reset-user-btn").forEach(btn => {
