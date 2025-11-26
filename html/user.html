@@ -135,19 +135,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script type="module" src="../js/user.js"></script>
 <script src="../js/logout.js"></script>
 <script>
-    // Initialize DataTable with pagination
-    document.addEventListener('DOMContentLoaded', function() {
-        $('#usersTable').DataTable({
-            "pageLength": 10,  // Show 10 entries per page
-            "lengthMenu": [10, 25, 50, 100],  // Dropdown options for entries per page
-            "order": [[0, 'asc']],  // Default sort by first column (Username)
-            "dom": 'Bfrtip',  // Add buttons to the DOM
+    // Function to initialize DataTable
+    function initializeDataTable() {
+        return $('#usersTable').DataTable({
+            "pageLength": 10,
+            "lengthMenu": [10, 25, 50, 100],
+            "order": [[0, 'asc']],
+            "dom": 'Bfrtip',
             "buttons": [
-                'pageLength',  // Show entries per page dropdown
-                'copy', 'csv', 'excel', 'pdf', 'print'  // Common export options
-            ]
+                'pageLength',
+                'copy', 'csv', 'excel', 'pdf', 'print'
+            ],
+            "destroy": true, // Allow reinitialization
+            "retrieve": true // Reuse the table if already initialized
         });
-    });
+    }
 </script>
 </body>
 </html>
