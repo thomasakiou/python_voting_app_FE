@@ -32,26 +32,63 @@ document.addEventListener("DOMContentLoaded", async () => {
     candidateDropdown?.addEventListener("change", loadVotes);
 });
 
-// Load voters into dropdown
-async function loadVoters() {
-    const voterDropdown = document.getElementById("voterDropdown");
-    if (!voterDropdown) return;
+// Load votes with pagination
+async function loadVotes() {
+    const tbody = document.querySelector("#votesTable tbody");
+    if (!tbody) return;
+
+    tbody.innerHTML = "<tr><td colspan='6' class='text-center'>Loading votes...</td></tr>";
+
+    let url = `${API_BASE}/votes/`;
+    const selectedVoterId = parseInt(document.getElementById("voterDropdown")?.value);
+    const selectedCandidateCode = document.getElementById("candidateDropdown")?.value;
+
+    if (selectedVoterId) {
+        url = `${API_BASE}/votes/${encodeURIComponent(selectedVoterId)}`;
+    } else if (selectedCandidateCode) {
+        url = `${API_BASE}/votes/code/${encodeURIComponent(selectedCandidateCode)}`;
+    }
 
     try {
-        const res = await fetch(`${API_BASE}/users/`, {
+        const response = await fetch(url, {
             headers: { Authorization: "Bearer " + token },
         });
-        if (res.ok) {
-            const users = await res.json();
-            users.forEach((user) => {
-                const opt = document.createElement("option");
-                opt.value = user.id;
-                opt.textContent = user.full_name || user.username || user.code;
-                voterDropdown.appendChild(opt);
-            });
+
+        if (response.ok) {
+            allVotes = await response.json();
+            filteredVotes = [...allVotes];
+            currentPage = 1;
+            renderVotes();
+            setupPagination();
+            
+            // Add search functionality
+            const searchInput = document.getElementById('votesSearch');
+            if (searchInput) {
+                searchInput.value = ''; // Clear previous search
+                searchInput.addEventListener('input', (e) => {
+                    const searchTerm = e.target.value.toLowerCase();
+                    if (searchTerm) {
+                        filteredVotes = allVotes.filter(vote => {
+                            return Object.values(vote).some(value => 
+                                String(value).toLowerCase().includes(searchTerm)
+                            );
+                        });
+                    } else {
+                        filteredVotes = [...allVotes];
+                    }
+                    currentPage = 1;
+                    renderVotes();
+                    setupPagination();
+                });
+            }
+        } else if (response.status === 404) {
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center">No votes found.</td></tr>';
+        } else {
+            throw new Error('Failed to load votes');
         }
     } catch (err) {
-        console.error("Error loading voters:", err);
+        console.error("Error loading votes:", err);
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Error loading votes</td></tr>';
     }
 }
 
