@@ -83,6 +83,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // Main users functionality
+let loadUsers; // Declare loadUsers in the outer scope
 document.addEventListener("DOMContentLoaded", async () => {
     const loadUsersBtn = document.getElementById("loadUsers");
     const token = localStorage.getItem("access_token");
@@ -286,7 +287,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Previous button
         const prevLi = document.createElement('li');
         prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
-        prevLi.innerHTML = '<a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>';
+        prevLi.innerHTML = '<a class="page-link" href="#" aria-label="Previous">Previous</a>';
         prevLi.addEventListener('click', (e) => {
             e.preventDefault();
             if (currentPage > 1) {
@@ -314,7 +315,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Next button
         const nextLi = document.createElement('li');
         nextLi.className = `page-item ${currentPage === pageCount ? 'disabled' : ''}`;
-        nextLi.innerHTML = '<a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>';
+        nextLi.innerHTML = '<a class="page-link" href="#" aria-label="Next">Next</a>';
         nextLi.addEventListener('click', (e) => {
             e.preventDefault();
             if (currentPage < pageCount) {
@@ -371,11 +372,40 @@ document.addEventListener("DOMContentLoaded", async () => {
         setupPagination(filteredUsers);
     });
 
+    // Initialize and assign loadUsers
+    loadUsers = async function() {
+        tbody.innerHTML = "<tr><td colspan='6' class='text-center'>Loading users...</td></";
+        const token = localStorage.getItem("access_token");
+
+        try {
+            const response = await fetch(`${API_BASE}/users/`, {
+                method: "GET",
+                headers: {"Authorization": "Bearer " + token}
+            });
+
+            if (response.ok) {
+                allUsers = await response.json();
+                filteredUsers = [...allUsers];
+                displayUsers(currentPage, filteredUsers);
+                setupPagination(filteredUsers);
+                setupEventListeners();
+            } else {
+                const error = await response.json();
+                alert(error.detail || "Failed to load users.");
+            }
+        } catch (err) {
+            console.error("Error loading users:", err);
+            tbody.innerHTML = "<tr><td colspan='6' class='text-center text-danger'>Error loading users</td></";
+        }
+    };
+
     // Initial load
     loadUsers();
 
     // Attach event to "Load Users" button
-    loadUsersBtn.addEventListener("click", loadUsers);
+    if (loadUsersBtn) {
+        loadUsersBtn.addEventListener("click", loadUsers);
+    }
 
 
 
