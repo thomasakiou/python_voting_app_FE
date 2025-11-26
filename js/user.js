@@ -61,11 +61,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     loadUsers();
 });
 
-
-// import {API_BASE, configReady} from "./config.js";
-// ========================
-// GET ALL USERS (ADMIN ONLY)
-// ========================
+// Main users functionality
 document.addEventListener("DOMContentLoaded", async () => {
     const loadUsersBtn = document.getElementById("loadUsers");
     const token = localStorage.getItem("access_token");
@@ -75,6 +71,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         alert("You must log in first.");
         return;
     }
+
     await configReady;
 
     async function loadUsers() {
@@ -91,251 +88,242 @@ document.addEventListener("DOMContentLoaded", async () => {
                 allUsers = await response.json();
                 displayUsers(currentPage);
                 setupPagination();
-                    // if (disableAllVotersBtn) {
-                    // disableAllVotersBtn.addEventListener("click", async () => {
-                    //     if (!confirm("Are you sure you want to disable all voters?")) return;
-
-                    //     try {
-                    //     const response = await fetch(`${API_BASE}/users/disable-voters`, {
-                    //         method: "PATCH",
-                    //         headers: {
-                    //         "Authorization": "Bearer " + token
-                    //         }
-                    //     });
-
-                    //     if (response.ok) {
-                    //         const result = await response.json();
-                    //         alert(result.message || "All voters have been disabled.");
-
-                    //         // ✅ Update UI instantly
-                    //         document.querySelectorAll(".toggle-active-btn").forEach(btn => {
-                    //         const role = btn.closest("tr")?.querySelector(".user-role")?.textContent?.trim()?.toLowerCase();
-                    //         if (role === "voter") {
-                    //             btn.textContent = "Inactive";
-                    //             btn.classList.remove("btn-success");
-                    //             btn.classList.add("btn-secondary");
-                    //         }
-                    //         });
-                    //     } else {
-                    //         const error = await response.json();
-                    //         alert(error.detail || "Failed to disable voters.");
-                    //     }
-                    //     } catch (err) {
-                    //     console.error("Network error while disabling voters:", err);
-                    //     alert("Network error while disabling voters.");
-                    //     }
-                    // });
-                    // }
-
-                    // ✅ Disable All Voters Button
-const disableAllVotersBtn = document.getElementById("disableAllVotersBtn");
-const enableAllVotersBtn = document.getElementById("enableAllVotersBtn");
-
-if (disableAllVotersBtn) {
-    disableAllVotersBtn.addEventListener("click", async () => {
-        if (!confirm("Are you sure you want to disable all voters?")) return;
-
-        try {
-            const response = await fetch(`${API_BASE}/users/disable-voters`, {
-                method: "PATCH",
-                headers: {
-                    "Authorization": "Bearer " + token
-                }
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                alert(result.message || "All voters have been disabled.");
-
-                 location.reload();
-
-                // ✅ Update individual user buttons
-                document.querySelectorAll(".toggle-active-btn").forEach(btn => {
-                    const role = btn.closest("tr")?.querySelector(".user-role")?.textContent?.trim()?.toLowerCase();
-                    if (role === "voter") {
-                        btn.textContent = "Inactive";
-                        btn.classList.remove("btn-success");
-                        btn.classList.add("btn-secondary");
-                    }
-                });
-            } else {
-                const error = await response.json();
-                alert(error.detail || "Failed to disable voters.");
-            }
-        } catch (err) {
-            console.error("Network error while disabling voters:", err);
-            alert("Network error while disabling voters.");
-        }
-    });
-}
-
-
-
-                    // ✅ Enable All Voters Button
-                    if (enableAllVotersBtn) {
-                    enableAllVotersBtn.addEventListener("click", async () => {
-                        if (!confirm("Are you sure you want to enable all voters?")) return;
-
-                        try {
-                        const response = await fetch(`${API_BASE}/users/enable-voters`, {
-                            method: "PATCH",
-                            headers: {
-                            "Authorization": `Bearer ${token}`,
-                            "Content-Type": "application/json"
-                            }
-                        });
-
-                        if (response.ok) {
-                            const result = await response.json();
-                            alert(result.message || "All voters have been enabled.");
-
-                             location.reload();
-
-                            // ✅ Update UI instantly
-                            document.querySelectorAll(".toggle-active-btn").forEach(btn => {
-                            const role = btn.closest("tr")?.querySelector(".user-role")?.textContent?.trim()?.toLowerCase();
-                            if (role === "voter") {
-                                btn.textContent = "Active";
-                                btn.classList.add("btn-success");
-                                btn.classList.remove("btn-secondary");
-                            }
-                            });
-                        } else {
-                            const error = await response.json();
-                            alert(error.detail || "Failed to enable voters.");
-                        }
-                        } catch (err) {
-                        console.error("Network error while enabling voters:", err);
-                        alert("Network error while enabling voters.");
-                        }
-                    });
-                    }
-
-
-
-
-                    // ✅ Toggle Active/Inactive
-                    tbody.querySelectorAll(".toggle-active-btn").forEach(btn => {
-                        btn.addEventListener("click", async (e) => {
-                            const userId = e.target.dataset.id;
-                            const button = e.target;
-                            const currentlyActive = button.textContent.trim() === "Active";
-                            const newStatus = !currentlyActive; // toggle
-
-                            try {
-                                const response = await fetch(
-                                    `${API_BASE}/users/${userId}/status?is_active=${newStatus}`,
-                                    {
-                                        method: "PATCH",
-                                        headers: {
-                                            "Authorization": `Bearer ${token}`,
-                                            "Content-Type": "application/json"
-                                        }
-                                    }
-                                );
-
-                                if (response.ok) {
-                                    const result = await response.json();
-                                    alert(result.message || `User is now ${newStatus ? "Active" : "Inactive"}`);
-
-                                    // ✅ Update button instantly (no reload)
-                                    button.textContent = newStatus ? "Active" : "Inactive";
-                                    button.classList.toggle("btn-success", newStatus);
-                                    button.classList.toggle("btn-secondary", !newStatus);
-                                } else {
-                                    const error = await response.json();
-                                    alert(error.detail || "Failed to toggle user status.");
-                                }
-                            } catch (err) {
-                                console.error("Network error while toggling user status.", err);
-                                alert("Network error while toggling user status.");
-                            }
-                        });
-                    });
-
-                    // ✅ Disable All Voters        
-                    // document.getElementById('disableVotersBtn').addEventListener('click', async () => {
-                    // if (!confirm('Are you sure you want to disable all voters?')) return;
-
-                    // try {
-                    //     const response = await fetch(`${API_BASE}/users/disable-voters`, {  // adjust URL to your route
-                    //     method: 'PATCH',
-                    //     headers: {
-                    //         'Content-Type': 'application/json',
-                    //         // 'Authorization': 'Bearer ' + localStorage.getItem('token')  // if auth is required
-                    //     }
-                    //     });
-
-                    //     const data = await response.json();
-                    //     alert(data.message);
-                    // } catch (error) {
-                    //     alert('Error disabling voters');
-                    //     console.error(error);
-                    // }
-                    // });
-
-
-                    // ✅ Delete User
-                    tbody.querySelectorAll(".delete-user-btn").forEach(btn => {
-                        btn.addEventListener("click", async (e) => {
-                            const userId = e.target.dataset.id;
-                            if (!confirm("Are you sure you want to delete this user?")) return;
-
-                            try {
-                                const response = await fetch(`${API_BASE}/users/${userId}`, {
-                                    method: "DELETE",
-                                    headers: {"Authorization": `Bearer ${token}`}
-                                });
-
-                                if (response.ok) {
-                                    alert("User deleted successfully!");
-                                    loadUsers(); // Refresh table
-                                } else {
-                                    const error = await response.json();
-                                    alert(error.detail || "Failed to delete user.");
-                                }
-                            } catch (err) {
-                                console.error("Network error while deleting user.", err);
-                                alert("Network error while deleting user.");
-                            }
-                        });
-                    });
-
-                    // ✅ Reset Password
-                    tbody.querySelectorAll(".reset-user-btn").forEach(btn => {
-                        btn.addEventListener("click", async (e) => {
-                            const username = e.target.dataset.username;
-                            if (!confirm(`Reset password for user "${username}"?`)) return;
-
-                            try {
-                                const response = await fetch(`${API_BASE}/api/reset-password/${username}`, {
-                                    method: "POST",
-                                    headers: {
-                                        "Authorization": `Bearer ${token}`,
-                                        "Content-Type": "application/json"
-                                    }
-                                });
-
-                                if (response.ok) {
-                                    const result = await response.json();
-                                    alert(result.message || `Password for "${username}" has been reset.`);
-                                } else {
-                                    const error = await response.json();
-                                    alert(error.detail || "Failed to reset password.");
-                                }
-                            } catch (err) {
-                                console.error("Network error while resetting password.", err);
-                                alert("Network error while resetting password.");
-                            }
-                        });
-                    });
-                }
+                setupEventListeners();
             } else {
                 const error = await response.json();
                 alert(error.detail || "Failed to load users.");
             }
         } catch (err) {
-            alert("Network error.");
+            console.error("Error loading users:", err);
+            tbody.innerHTML = "<tr><td colspan='5' class='text-center text-danger'>Error loading users</td></tr>";
+        }
+    }
+
+    function setupEventListeners() {
+        const disableAllVotersBtn = document.getElementById("disableAllVotersBtn");
+        const enableAllVotersBtn = document.getElementById("enableAllVotersBtn");
+
+        // Disable All Voters Button
+        if (disableAllVotersBtn) {
+            disableAllVotersBtn.addEventListener("click", async () => {
+                if (!confirm("Are you sure you want to disable all voters?")) return;
+                await updateAllVotersStatus(false);
+            });
+        }
+
+        // Enable All Voters Button
+        if (enableAllVotersBtn) {
+            enableAllVotersBtn.addEventListener("click", async () => {
+                if (!confirm("Are you sure you want to enable all voters?")) return;
+                await updateAllVotersStatus(true);
+            });
+        }
+
+        // Toggle Active/Inactive
+        tbody.querySelectorAll(".toggle-active-btn").forEach(btn => {
+            btn.addEventListener("click", async (e) => {
+                const userId = e.target.dataset.id;
+                const button = e.target;
+                const currentlyActive = button.textContent.trim() === "Active";
+                const newStatus = !currentlyActive;
+
+                try {
+                    const response = await fetch(
+                        `${API_BASE}/users/${userId}/status?is_active=${newStatus}`,
+                        {
+                            method: "PATCH",
+                            headers: {
+                                "Authorization": `Bearer ${token}`,
+                                "Content-Type": "application/json"
+                            }
+                        }
+                    );
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        alert(result.message || `User is now ${newStatus ? "Active" : "Inactive"}`);
+                        button.textContent = newStatus ? "Active" : "Inactive";
+                        button.classList.toggle("btn-success", newStatus);
+                        button.classList.toggle("btn-secondary", !newStatus);
+                    } else {
+                        const error = await response.json();
+                        alert(error.detail || "Failed to toggle user status.");
+                    }
+                } catch (err) {
+                    console.error("Error toggling user status:", err);
+                    alert("An error occurred while updating user status.");
+                }
+            });
+        });
+
+        // Delete User
+        tbody.querySelectorAll(".delete-user-btn").forEach(btn => {
+            btn.addEventListener("click", async (e) => {
+                const userId = e.target.dataset.id;
+                if (!confirm("Are you sure you want to delete this user?")) return;
+
+                try {
+                    const response = await fetch(`${API_BASE}/users/${userId}`, {
+                        method: "DELETE",
+                        headers: {"Authorization": `Bearer ${token}`}
+                    });
+
+                    if (response.ok) {
+                        alert("User deleted successfully!");
+                        loadUsers();
+                    } else {
+                        const error = await response.json();
+                        alert(error.detail || "Failed to delete user.");
+                    }
+                } catch (err) {
+                    console.error("Error deleting user:", err);
+                    alert("An error occurred while deleting the user.");
+                }
+            });
+        });
+
+        // Reset Password
+        tbody.querySelectorAll(".reset-user-btn").forEach(btn => {
+            btn.addEventListener("click", async (e) => {
+                const username = e.target.dataset.username;
+                if (!confirm(`Reset password for user "${username}"?`)) return;
+
+                try {
+                    const response = await fetch(`${API_BASE}/api/reset-password/${username}`, {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                            "Content-Type": "application/json"
+                        }
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        alert(result.message || `Password for "${username}" has been reset.`);
+                    } else {
+                        const error = await response.json();
+                        alert(error.detail || "Failed to reset password.");
+                    }
+                } catch (err) {
+                    console.error("Error resetting password:", err);
+                    alert("An error occurred while resetting the password.");
+                }
+            });
+        });
+    }
+
+    // Display users for current page
+    function displayUsers(page) {
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const paginatedUsers = allUsers.slice(start, end);
+
+        if (paginatedUsers.length === 0) {
+            tbody.innerHTML = "<tr><td colspan='6' class='text-center'>No users found.</td></tr>";
+            return;
+        }
+
+        tbody.innerHTML = paginatedUsers.map((user, index) => `
+            <tr>
+                <td>${start + index + 1}</td>
+                <td>${user.username}</td>
+                <td>${user.full_name || ''}</td>
+                <td>${user.phone || ''}</td>
+                <td class='user-role'>${user.role}</td>
+                <td>
+                    <button class="btn btn-sm ${user.is_active ? 'btn-success' : 'btn-secondary'} toggle-active-btn" 
+                            data-id="${user.id}">
+                        ${user.is_active ? 'Active' : 'Inactive'}
+                    </button>
+                    <button class="btn btn-danger btn-sm delete-user-btn" data-id="${user.id}">
+                        Delete
+                    </button>
+                    <button class="btn btn-warning btn-sm reset-user-btn" data-username="${user.username}">
+                        Reset
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    // Setup pagination controls
+    function setupPagination() {
+        const pageCount = Math.ceil(allUsers.length / rowsPerPage);
+        paginationContainer.innerHTML = '';
+
+        if (pageCount <= 1) return;
+
+        const ul = document.createElement('ul');
+        ul.className = 'pagination';
+
+        // Previous button
+        const prevLi = document.createElement('li');
+        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+        prevLi.innerHTML = '<a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>';
+        prevLi.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentPage > 1) {
+                currentPage--;
+                displayUsers(currentPage);
+                setupPagination();
+            }
+        });
+        ul.appendChild(prevLi);
+
+        // Page numbers
+        for (let i = 1; i <= pageCount; i++) {
+            const li = document.createElement('li');
+            li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+            li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+            li.addEventListener('click', (e) => {
+                e.preventDefault();
+                currentPage = i;
+                displayUsers(currentPage);
+                setupPagination();
+            });
+            ul.appendChild(li);
+        }
+
+        // Next button
+        const nextLi = document.createElement('li');
+        nextLi.className = `page-item ${currentPage === pageCount ? 'disabled' : ''}`;
+        nextLi.innerHTML = '<a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>';
+        nextLi.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentPage < pageCount) {
+                currentPage++;
+                displayUsers(currentPage);
+                setupPagination();
+            }
+        });
+        ul.appendChild(nextLi);
+
+        paginationContainer.appendChild(ul);
+    }
+
+    // Helper function to update all voters status
+    async function updateAllVotersStatus(enable) {
+        const token = localStorage.getItem("access_token");
+        try {
+            const response = await fetch(`${API_BASE}/users/toggle-all-voters?enable=${enable}`, {
+                method: "PATCH",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                alert(result.message || `All voters have been ${enable ? 'enabled' : 'disabled'}`);
+                loadUsers();
+            } else {
+                const error = await response.json();
+                alert(error.detail || `Failed to ${enable ? 'enable' : 'disable'} all voters.`);
+            }
+        } catch (err) {
+            console.error(`Error ${enable ? 'enabling' : 'disabling'} all voters:`, err);
+            alert(`An error occurred while ${enable ? 'enabling' : 'disabling'} all voters.`);
         }
     }
 
