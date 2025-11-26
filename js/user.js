@@ -7,11 +7,32 @@ let allUsers = [];
 
 // DOM elements
 const tbody = document.querySelector('#usersTable tbody');
+const tableContainer = document.getElementById('usersTable').parentNode;
+
+// Create and insert search container
+const searchContainer = document.createElement('div');
+searchContainer.className = 'mb-3';
+searchContainer.innerHTML = `
+    <div class="input-group">
+        <span class="input-group-text">Search:</span>
+        <input type="text" id="userSearch" class="form-control" placeholder="Search by name...">
+    </div>
+`;
+tableContainer.insertBefore(searchContainer, document.getElementById('usersTable'));
+
+// Create and insert pagination container
 const paginationContainer = document.createElement('div');
-paginationContainer.className = 'pagination-container mt-3 d-flex justify-content-center';
-if (document.getElementById('usersTable')) {
-    document.getElementById('usersTable').parentNode.insertBefore(paginationContainer, document.getElementById('usersTable').nextSibling);
-}
+paginationContainer.className = 'pagination-container mt-3 d-flex justify-content-between align-items-center';
+
+// Create entries info element
+const entriesInfo = document.createElement('div');
+entriesInfo.className = 'entries-info';
+paginationContainer.appendChild(entriesInfo);
+
+tableContainer.appendChild(paginationContainer);
+
+// Store filtered users for search functionality
+let filteredUsers = [];
 
 // Upload functionality
 document.addEventListener("DOMContentLoaded", async () => {
@@ -86,8 +107,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             if (response.ok) {
                 allUsers = await response.json();
-                displayUsers(currentPage);
-                setupPagination();
+                displayUsers(currentPage, allUsers);
+                setupPagination(allUsers);
                 setupEventListeners();
             } else {
                 const error = await response.json();
@@ -213,10 +234,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Display users for current page
-    function displayUsers(page) {
+    function displayUsers(page, users = allUsers) {
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
-        const paginatedUsers = allUsers.slice(start, end);
+        const paginatedUsers = users.slice(start, end);
+        const total = users.length;
+
+        // Update entries info
+        const showingFrom = total > 0 ? start + 1 : 0;
+        const showingTo = Math.min(end, total);
+        entriesInfo.textContent = `Showing ${showingFrom} to ${showingTo} of ${total} entries`;
 
         if (paginatedUsers.length === 0) {
             tbody.innerHTML = "<tr><td colspan='6' class='text-center'>No users found.</td></tr>";
@@ -247,8 +274,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Setup pagination controls
-    function setupPagination() {
-        const pageCount = Math.ceil(allUsers.length / rowsPerPage);
+    function setupPagination(users = allUsers) {
+        const pageCount = Math.ceil(users.length / rowsPerPage);
         paginationContainer.innerHTML = '';
 
         if (pageCount <= 1) return;
@@ -264,8 +291,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             e.preventDefault();
             if (currentPage > 1) {
                 currentPage--;
-                displayUsers(currentPage);
-                setupPagination();
+                displayUsers(currentPage, users);
+                setupPagination(users);
             }
         });
         ul.appendChild(prevLi);
@@ -278,8 +305,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             li.addEventListener('click', (e) => {
                 e.preventDefault();
                 currentPage = i;
-                displayUsers(currentPage);
-                setupPagination();
+                displayUsers(currentPage, users);
+                setupPagination(users);
             });
             ul.appendChild(li);
         }
@@ -292,8 +319,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             e.preventDefault();
             if (currentPage < pageCount) {
                 currentPage++;
-                displayUsers(currentPage);
-                setupPagination();
+                displayUsers(currentPage, users);
+                setupPagination(users);
             }
         });
         ul.appendChild(nextLi);
@@ -327,10 +354,27 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+    // Search functionality
+    const searchInput = document.getElementById('userSearch');
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        if (searchTerm) {
+            filteredUsers = allUsers.filter(user => 
+                (user.full_name && user.full_name.toLowerCase().includes(searchTerm)) ||
+                (user.username && user.username.toLowerCase().includes(searchTerm))
+            );
+        } else {
+            filteredUsers = [...allUsers];
+        }
+        currentPage = 1; // Reset to first page when searching
+        displayUsers(currentPage, filteredUsers);
+        setupPagination(filteredUsers);
+    });
+
     // Initial load
     loadUsers();
 
-    // ✅ Attach event to "Load Users" button
+    // Attach event to "Load Users" button
     loadUsersBtn.addEventListener("click", loadUsers);
 
 
