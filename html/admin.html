@@ -78,17 +78,35 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <button id="exportPDF" class="mt-1"><span class="btn-icon">📄</span> Export Votes to PDF</button>
     </div>
 
-    <table id="votesTable">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Voter</th>
-            <th>Candidate</th>
-            <th>Office Voted For</th>
-        </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+    <!-- Search input -->
+    <div class="mb-3">
+        <div class="input-group">
+            <span class="input-group-text">Search:</span>
+            <input type="text" id="votesSearch" class="form-control" placeholder="Search votes...">
+        </div>
+    </div>
+
+    <!-- Votes table -->
+    <div class="table-responsive">
+        <table id="votesTable" class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th style="width: 5%;">#</th>
+                    <th style="width: 25%;">Voter</th>
+                    <th style="width: 30%;">Candidate</th>
+                    <th style="width: 30%;">Office Voted For</th>
+                    <th style="width: 10%;">Date</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    
+    <!-- Pagination info and controls -->
+    <div class="pagination-container mt-3 d-flex justify-content-between align-items-center">
+        <div class="entries-info"></div>
+        <ul class="pagination mb-0"></ul>
+    </div>
 </div>
 
 <script type="module" src="../js/admin.js"></script>
