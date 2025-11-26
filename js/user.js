@@ -1,5 +1,19 @@
 import {API_BASE, configReady} from "./config.js";
 
+// Pagination variables
+let currentPage = 1;
+const rowsPerPage = 10;
+let allUsers = [];
+
+// DOM elements
+const tbody = document.querySelector('#usersTable tbody');
+const paginationContainer = document.createElement('div');
+paginationContainer.className = 'pagination-container mt-3 d-flex justify-content-center';
+if (document.getElementById('usersTable')) {
+    document.getElementById('usersTable').parentNode.insertBefore(paginationContainer, document.getElementById('usersTable').nextSibling);
+}
+
+// Upload functionality
 document.addEventListener("DOMContentLoaded", async () => {
     const uploadInput = document.getElementById("uploadFile");
     const token = localStorage.getItem("access_token");
@@ -25,7 +39,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 method: "POST",
                 headers: {
                     "Authorization": "Bearer " + token
-                    // ❌ do NOT set Content-Type, fetch will set it automatically for FormData
                 },
                 body: formData
             });
@@ -33,8 +46,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (response.ok) {
                 const result = await response.json();
                 alert(result.message || "Users uploaded successfully!");
-                // reload users after upload
-                if (typeof loadUsers === "function") loadUsers();
+                loadUsers();
             } else {
                 const error = await response.json();
                 alert(error.detail || "Failed to upload users.");
@@ -44,6 +56,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             alert("Network error while uploading users.");
         }
     });
+
+    // Initial load
+    loadUsers();
 });
 
 
@@ -63,7 +78,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     await configReady;
 
     async function loadUsers() {
-        tbody.innerHTML = "";
+        tbody.innerHTML = "<tr><td colspan='5' class='text-center'>Loading users...</td></tr>";
+        const token = localStorage.getItem("access_token");
 
         try {
             const response = await fetch(`${API_BASE}/users/`, {
@@ -72,33 +88,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
 
             if (response.ok) {
-                const users = await response.json();
-                if (users.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5">No users found.</td></tr>`;
-                } else {
-                    users.forEach(user => {
-                        const row = document.createElement("tr");
-                        const statusClass = user.is_active ? "btn-success" : "btn-secondary";
-                        const statusText = user.is_active ? "Active" : "Inactive";
-                        row.innerHTML = `
-                            <td>${user.username}</td>
-                            <td>${user.full_name}</td>
-                            <td>${user.phone}</td>
-                            <td>${user.role}</td>
-                            <td style="display: flex; gap: 8px;">
-                                <button class="btn btn-danger btn-sm delete-user-btn" data-id="${user.id}">Delete</button>
-                                <button class="btn btn-primary btn-sm update-user-btn" data-id="${user.id}">Update</button>
-                                <button class="btn btn-warning btn-sm reset-user-btn" data-username="${user.username}">Reset</button>
-                                <button class="btn btn-sm ${statusClass} toggle-active-btn" data-id="${user.id}">${statusText}</button>
-                            </td>
-                        `;
-                        tbody.appendChild(row);
-                    });
-
-                    // // ✅ Disable All Voters Button
-                    // const disableAllVotersBtn = document.getElementById("disableAllVotersBtn");
-                    // const enableAllVotersBtn = document.getElementById("enableAllVotersBtn");
-
+                allUsers = await response.json();
+                displayUsers(currentPage);
+                setupPagination();
                     // if (disableAllVotersBtn) {
                     // disableAllVotersBtn.addEventListener("click", async () => {
                     //     if (!confirm("Are you sure you want to disable all voters?")) return;
