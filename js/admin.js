@@ -1,11 +1,18 @@
 import { API_BASE, configReady } from "./config.js";
 
+// Pagination variables
+let currentPage = 1;
+const rowsPerPage = 10;
+let allVotes = [];
+let filteredVotes = [];
+let token;
+
 document.addEventListener("DOMContentLoaded", async () => {
     const voterDropdown = document.getElementById("voterDropdown");
     const candidateDropdown = document.getElementById("candidateDropdown");
     const loadVotesBtn = document.getElementById("loadVotes");
     const tbody = document.querySelector("#votesTable tbody");
-    const token = localStorage.getItem("access_token");
+    token = localStorage.getItem("access_token");
 
     if (!token) {
         alert("You must log in first.");
@@ -14,62 +21,64 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await configReady;
 
-// Update the loadVotes function to use pagination
-async function loadVotes() {
-    const tbody = document.querySelector("#votesTable tbody");
-    tbody.innerHTML = "<tr><td colspan='6' class='text-center'>Loading votes...</td></tr>";
+    // Load initial data
+    await loadVoters();
+    await loadCandidates();
+    await loadVotes();
 
-    let url = `${API_BASE}/votes/`;
-    const selectedVoterId = parseInt(voterDropdown.value);
-    const selectedCandidateCode = candidateDropdown.value;
+    // Event listeners
+    loadVotesBtn?.addEventListener("click", loadVotes);
+    voterDropdown?.addEventListener("change", loadVotes);
+    candidateDropdown?.addEventListener("change", loadVotes);
+});
 
-    if (selectedVoterId) {
-        url = `${API_BASE}/votes/${encodeURIComponent(selectedVoterId)}`;
-    } else if (selectedCandidateCode) {
-        url = `${API_BASE}/votes/code/${encodeURIComponent(selectedCandidateCode)}`;
-    }
+// Load voters into dropdown
+async function loadVoters() {
+    const voterDropdown = document.getElementById("voterDropdown");
+    if (!voterDropdown) return;
 
     try {
-        const response = await fetch(url, {
+        const res = await fetch(`${API_BASE}/users/`, {
             headers: { Authorization: "Bearer " + token },
         });
-
-        if (response.ok) {
-            allVotes = await response.json();
-            filteredVotes = [...allVotes];
-            currentPage = 1;
-            renderVotes();
-            setupPagination();
-            
-            // Add search functionality
-            const searchInput = document.getElementById('votesSearch');
-            if (searchInput) {
-                searchInput.addEventListener('input', (e) => {
-                    const searchTerm = e.target.value.toLowerCase();
-                    if (searchTerm) {
-                        filteredVotes = allVotes.filter(vote => {
-                            return Object.values(vote).some(value => 
-                                String(value).toLowerCase().includes(searchTerm)
-                            );
-                        });
-                    } else {
-                        filteredVotes = [...allVotes];
-                    }
-                    currentPage = 1;
-                    renderVotes();
-                    setupPagination();
-                });
-            }
-        } else if (response.status === 404) {
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center">No votes found.</td></tr>';
-        } else {
-            throw new Error('Failed to load votes');
+        if (res.ok) {
+            const users = await res.json();
+            users.forEach((user) => {
+                const opt = document.createElement("option");
+                opt.value = user.id;
+                opt.textContent = user.full_name || user.username || user.code;
+                voterDropdown.appendChild(opt);
+            });
         }
     } catch (err) {
-        console.error("Error loading votes:", err);
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Error loading votes</td></tr>';
+        console.error("Error loading voters:", err);
     }
 }
+
+// Load candidates into dropdown
+async function loadCandidates() {
+    const candidateDropdown = document.getElementById("candidateDropdown");
+    if (!candidateDropdown) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/candidates/`, {
+            headers: { Authorization: "Bearer " + token },
+        });
+        if (res.ok) {
+            const candidates = await res.json();
+            candidates.forEach((cand) => {
+                const opt = document.createElement("option");
+                opt.value = cand.candidate_code;
+                opt.textContent = cand.name || cand.code;
+                candidateDropdown.appendChild(opt);
+            });
+        }
+    } catch (err) {
+        console.error("Error loading candidates:", err);
+    }
+}
+
+// Rest of your existing code for loadVotes, renderVotes, and setupPagination...
 
 // Update the renderVotes function to handle pagination
 function renderVotes() {
@@ -170,11 +179,11 @@ function setupPagination() {
     pagination.appendChild(nextLi);
 }
 
-// Add pagination variables at the top of the file
-let currentPage = 1;
-const rowsPerPage = 10;
-let allVotes = [];
-let filteredVotes = [];
+// // Add pagination variables at the top of the file
+// let currentPage = 1;
+// const rowsPerPage = 10;
+// let allVotes = [];
+// let filteredVotes = [];
 
 //     // ✅ Load voters into dropdown
 //     async function loadVoters() {
@@ -362,4 +371,4 @@ let filteredVotes = [];
     //     doc.save("votes_report.pdf");
     // });
 
-});
+// });
