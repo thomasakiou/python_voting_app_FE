@@ -1,90 +1,311 @@
-import {API_BASE, configReady} from "./config.js";
+import { API_BASE, configReady } from "./config.js";
 
 // Pagination variables
 let currentPage = 1;
 const rowsPerPage = 10;
 let allUsers = [];
 let filteredUsers = [];
+let token;
 
 // DOM elements
 const tbody = document.querySelector('#usersTable tbody');
-const tableContainer = document.getElementById('usersTable').parentNode;
+const searchInput = document.getElementById('userSearch');
 
-// Create and insert search container
-const searchContainer = document.createElement('div');
-searchContainer.className = 'mb-3';
-searchContainer.innerHTML = `
-    <div class="input-group">
-        <span class="input-group-text">Search:</span>
-        <input type="text" id="userSearch" class="form-control" placeholder="Search by name...">
-    </div>
-`;
-tableContainer.insertBefore(searchContainer, document.getElementById('usersTable'));
-
-// Create and insert pagination container
-const paginationContainer = document.createElement('div');
-paginationContainer.className = 'pagination-container mt-3 d-flex justify-content-between align-items-center';
-
-// Create entries info element
-const entriesInfo = document.createElement('div');
-entriesInfo.className = 'entries-info';
-paginationContainer.appendChild(entriesInfo);
-
-tableContainer.appendChild(paginationContainer);
-
-// Store filtered users for search functionality
-// let filteredUsers = [];
-
-// Upload functionality
+// Initialize when DOM is loaded
 document.addEventListener("DOMContentLoaded", async () => {
-    const uploadInput = document.getElementById("uploadFile");
-    const token = localStorage.getItem("access_token");
-
-    if (!uploadInput) return;
-
     await configReady;
-
-    uploadInput.addEventListener("change", async (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        if (!token) {
-            alert("You must log in first.");
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append("file", file);
-
-        try {
-            const response = await fetch(`${API_BASE}/users/upload-csv`, {
-                method: "POST",
-                headers: {
-                    "Authorization": "Bearer " + token
-                },
-                body: formData
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                alert(result.message || "Users uploaded successfully!");
-                loadUsers();
-            } else {
-                const error = await response.json();
-                alert(error.detail || "Failed to upload users.");
-            }
-        } catch (err) {
-            console.error("Upload error:", err);
-            alert("Network error while uploading users.");
-        }
-    });
-
-    // Initial load
-    loadUsers();
+    token = localStorage.getItem("access_token");
+    
+    // Load initial data
+    await loadUsers();
+    
+    // Event listeners
+    document.getElementById('loadUsers')?.addEventListener('click', loadUsers);
+    document.getElementById('exportUsersPDF')?.addEventListener('click', exportToPDF);
+    document.getElementById('uploadFile')?.addEventListener('change', handleFileUpload);
+    document.getElementById('disableAllVotersBtn')?.addEventListener('click', () => updateAllVotersStatus(false));
+    document.getElementById('enableAllVotersBtn')?.addEventListener('click', () => updateAllVotersStatus(true));
+    
+    // Search functionality
+    if (searchInput) {
+        searchInput.addEventListener('input', handleSearch);
+    }
 });
 
-// Main users functionality
-let loadUsers; // Declare loadUsers in the outer scope
+// Load users function
+async function loadUsers() {
+    try {
+        const response = await fetch(`${API_BASE}/users/`, {
+            headers: { Authorization: "Bearer " + token },
+        });
+        
+        if (response.ok) {
+            allUsers = await response.json();
+            filteredUsers = [...allUsers];
+            currentPage = 1;
+            renderUsers();
+            setupPagination();
+        } else {
+            throw new Error("Failed to load users");
+        }
+    } catch (err) {
+        console.error("Error loading users:", err);
+        if (tbody) {
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Error loading users</td></tr>';
+        }
+    }
+}
+
+// Render users function
+function renderUsers() {
+    if (!tbody) return;
+    
+    const start = (currentPage - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    const paginatedUsers = filteredUsers.slice(start, end);
+    
+    tbody.innerHTML = '';
+    
+    if (paginatedUsers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center">No users found</td></tr>';
+        updateEntriesInfo();
+        return;
+    }
+    
+    paginatedUsers.forEach((user, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${start + index + 1}</td>
+            <td>${user.username || 'N/A'}</td>
+            <td>${user.full_name || 'N/A'}</td>
+            <td>${user.phone || 'N/A'}</td>
+            <td>${user.role || 'N/A'}</td>
+            <td>
+                <div class="btn-group" role="group">
+                    <button class="btn btn-sm btn-primary edit-user" data-id="${user.id}">Edit</button>
+                    <button class="btn btn-sm btn-danger delete-user" data-id="${user.id}">Delete</button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+    
+    updateEntriesInfo();
+}
+
+// Setup pagination
+function setupPagination() {
+    const pageCount = Math.ceil(filteredUsers.length / rowsPerPage);
+    const pagination = document.querySelector('.pagination');
+    if (!pagination) return;
+    
+    pagination.innerHTML = '';
+
+    if (pageCount <= 1) {
+        pagination.style.display = 'none';
+        return;
+    }
+    
+    pagination.style.display = 'flex';
+
+    // Previous button
+    const prevLi = document.createElement('li');
+    prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+    prevLi.innerHTML = '<a class="page-link" href="#" aria-label="Previous">Previous</a>';
+    prevLi.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (currentPage > 1) {
+            currentPage--;
+            renderUsers();
+            setupPagination();
+        }
+    });
+    pagination.appendChild(prevLi);
+
+    // Page numbers
+    for (let i = 1; i <= pageCount; i++) {
+        const li = document.createElement('li');
+        li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+        const a = document.createElement('a');
+        a.className = 'page-link';
+        a.href = '#';
+        a.textContent = i;
+        a.addEventListener('click', (e) => {
+            e.preventDefault();
+            currentPage = i;
+            renderUsers();
+            setupPagination();
+        });
+        li.appendChild(a);
+        pagination.appendChild(li);
+    }
+
+    // Next button
+    const nextLi = document.createElement('li');
+    nextLi.className = `page-item ${currentPage === pageCount ? 'disabled' : ''}`;
+    nextLi.innerHTML = '<a class="page-link" href="#" aria-label="Next">Next</a>';
+    nextLi.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (currentPage < pageCount) {
+            currentPage++;
+            renderUsers();
+            setupPagination();
+        }
+    });
+    pagination.appendChild(nextLi);
+}
+
+// Update entries info
+function updateEntriesInfo() {
+    const entriesInfo = document.querySelector('.entries-info');
+    if (!entriesInfo) return;
+    
+    const start = (currentPage - 1) * rowsPerPage;
+    const total = filteredUsers.length;
+    const end = Math.min(start + rowsPerPage, total);
+    const showingFrom = total > 0 ? start + 1 : 0;
+    
+    entriesInfo.textContent = `Showing ${showingFrom} to ${end} of ${total} entries`;
+}
+
+// Search handler
+function handleSearch(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    
+    if (searchTerm) {
+        filteredUsers = allUsers.filter(user => {
+            return Object.values(user).some(value => 
+                String(value).toLowerCase().includes(searchTerm)
+            );
+        });
+    } else {
+        filteredUsers = [...allUsers];
+    }
+    
+    currentPage = 1;
+    renderUsers();
+    setupPagination();
+}
+
+// Handle file upload
+async function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (!token) {
+        alert("You must log in first.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const response = await fetch(`${API_BASE}/users/upload`, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            },
+            body: formData
+        });
+
+        if (response.ok) {
+            alert('Users uploaded successfully!');
+            await loadUsers(); // Reload users after successful upload
+        } else {
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to upload file');
+        }
+    } catch (err) {
+        console.error('Error uploading file:', err);
+        alert('Error uploading file: ' + (err.message || 'Unknown error'));
+    }
+}
+
+// Export to PDF
+function exportToPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Add title
+    doc.setFontSize(18);
+    doc.text('Users List', 14, 22);
+    doc.setFontSize(11);
+    doc.setTextColor(100);
+
+    // Get table headers
+    const headers = [['#', 'Username', 'Name', 'Phone', 'Role']];
+    
+    // Prepare data
+    const data = filteredUsers.map((user, index) => [
+        index + 1,
+        user.username || '',
+        user.full_name || '',
+        user.phone || '',
+        user.role || ''
+    ]);
+
+    // Add table
+    doc.autoTable({
+        head: headers,
+        body: data,
+        startY: 30,
+        styles: {
+            fontSize: 10,
+            cellPadding: 2,
+            valign: 'middle'
+        },
+        headStyles: {
+            fillColor: [41, 128, 185],
+            textColor: 255,
+            fontStyle: 'bold'
+        },
+        alternateRowStyles: {
+            fillColor: [245, 245, 245]
+        },
+        margin: { top: 30 }
+    });
+
+    // Save the PDF
+    doc.save('users-list.pdf');
+}
+
+// Update all voters status
+async function updateAllVotersStatus(enable) {
+    if (!confirm(`Are you sure you want to ${enable ? 'enable' : 'disable'} all voters?`)) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE}/users/status`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({ active: enable })
+        });
+
+        if (response.ok) {
+            alert(`All voters have been ${enable ? 'enabled' : 'disabled'} successfully!`);
+            await loadUsers(); // Reload users to reflect changes
+        } else {
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to update voters status');
+        }
+    } catch (err) {
+        console.error('Error updating voters status:', err);
+        alert('Error: ' + (err.message || 'Failed to update voters status'));
+    }
+}
+
+// Initialize file upload event listener
+const uploadInput = document.getElementById("uploadFile");
+if (uploadInput) {
+    uploadInput.addEventListener("change", handleFileUpload);
+}
+
+// Set up event listeners for the page
 document.addEventListener("DOMContentLoaded", async () => {
     const loadUsersBtn = document.getElementById("loadUsers");
     const token = localStorage.getItem("access_token");
@@ -97,6 +318,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await configReady;
 
+    // Load users function
     async function loadUsers() {
         try {
             const response = await fetch(`${API_BASE}/users/`, {
