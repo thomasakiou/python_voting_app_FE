@@ -1,11 +1,18 @@
 import { API_BASE, configReady } from "./config.js";
 
+// Pagination variables
+let currentPage = 1;
+const rowsPerPage = 10;
+let allVotes = [];
+let filteredVotes = [];
+let token;
+
 document.addEventListener("DOMContentLoaded", async () => {
     const voterDropdown = document.getElementById("voterDropdown");
     const candidateDropdown = document.getElementById("candidateDropdown");
     const loadVotesBtn = document.getElementById("loadVotes");
     const tbody = document.querySelector("#votesTable tbody");
-    const token = localStorage.getItem("access_token");
+    token = localStorage.getItem("access_token");
 
     if (!token) {
         alert("You must log in first.");
@@ -14,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await configReady;
 
-    // ✅ Load voters into dropdown
+    // Load voters into dropdown
     async function loadVoters() {
         try {
             const res = await fetch(`${API_BASE}/users/`, {
@@ -25,8 +32,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 users.forEach((user) => {
                     const opt = document.createElement("option");
                     opt.value = user.id;
-                    opt.textContent =
-                        user.full_name || user.username || user.code;
+                    opt.textContent = user.full_name || user.username || user.code;
                     voterDropdown.appendChild(opt);
                 });
             }
@@ -35,7 +41,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // ✅ Load candidates into dropdown
+    // Load candidates into dropdown
     async function loadCandidates() {
         try {
             const res = await fetch(`${API_BASE}/candidates/`, {
@@ -45,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const candidates = await res.json();
                 candidates.forEach((cand) => {
                     const opt = document.createElement("option");
-                    opt.value = cand.candidate_code; // backend expects candidate code
+                    opt.value = cand.candidate_code;
                     opt.textContent = cand.name || cand.code;
                     candidateDropdown.appendChild(opt);
                 });
@@ -55,30 +61,110 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // ✅ Render votes table
-    function renderVotes(votes) {
-        tbody.innerHTML = "";
-        if (votes.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4">No votes found.</td></tr>`;
+    // Render paginated votes
+    function renderVotes() {
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const paginatedVotes = filteredVotes.slice(start, end);
+        const total = filteredVotes.length;
+
+        // Update entries info
+        const entriesInfo = document.querySelector('.entries-info');
+        const showingFrom = total > 0 ? start + 1 : 0;
+        const showingTo = Math.min(end, total);
+        if (entriesInfo) {
+            entriesInfo.textContent = `Showing ${showingFrom} to ${showingTo} of ${total} entries`;
+        }
+
+        // Clear and rebuild table rows
+        tbody.innerHTML = '';
+        if (paginatedVotes.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center">No votes found</td></tr>';
             return;
         }
-        votes.forEach((vote) => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${vote.id}</td>
-                <td>${vote.user_name}</td>
-                <td>${vote.candidate_name}</td>
-                <td>${vote.office_name}</td>
+
+        // Render votes
+        paginatedVotes.forEach((vote, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${start + index + 1}</td>
+                <td>${vote.user_name || 'N/A'}</td>
+                <td>${vote.candidate_name || 'N/A'}</td>
+                <td>${vote.office_name || 'N/A'}</td>
+                <td>${vote.created_at ? new Date(vote.created_at).toLocaleString() : 'N/A'}</td>
             `;
-            tbody.appendChild(row);
+            tbody.appendChild(tr);
         });
     }
 
-    // ✅ Load votes based on dropdowns
-    async function loadVotes() {
-        tbody.innerHTML = "";
-        let url = `${API_BASE}/votes/`;
+    // Setup pagination controls
+    function setupPagination() {
+        const pageCount = Math.ceil(filteredVotes.length / rowsPerPage);
+        const pagination = document.querySelector('.pagination');
+        if (!pagination) return;
+        
+        pagination.innerHTML = '';
 
+        if (pageCount <= 1) {
+            pagination.style.display = 'none';
+            return;
+        } else {
+            pagination.style.display = 'flex';
+        }
+
+        // Previous button
+        const prevLi = document.createElement('li');
+        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+        prevLi.innerHTML = '<a class="page-link" href="#" aria-label="Previous">Previous</a>';
+        prevLi.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentPage > 1) {
+                currentPage--;
+                renderVotes();
+                setupPagination();
+            }
+        });
+        pagination.appendChild(prevLi);
+
+        // Page numbers
+        for (let i = 1; i <= pageCount; i++) {
+            const li = document.createElement('li');
+            li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+            const a = document.createElement('a');
+            a.className = 'page-link';
+            a.href = '#';
+            a.textContent = i;
+            a.addEventListener('click', (e) => {
+                e.preventDefault();
+                currentPage = i;
+                renderVotes();
+                setupPagination();
+            });
+            li.appendChild(a);
+            pagination.appendChild(li);
+        }
+
+        // Next button
+        const nextLi = document.createElement('li');
+        nextLi.className = `page-item ${currentPage === pageCount ? 'disabled' : ''}`;
+        nextLi.innerHTML = '<a class="page-link" href="#" aria-label="Next">Next</a>';
+        nextLi.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentPage < pageCount) {
+                currentPage++;
+                renderVotes();
+                setupPagination();
+            }
+        });
+        pagination.appendChild(nextLi);
+    }
+
+    // Load votes with pagination
+    async function loadVotes() {
+        const tbody = document.querySelector("#votesTable tbody");
+        tbody.innerHTML = "<tr><td colspan='6' class='text-center'>Loading votes...</td></tr>";
+
+        let url = `${API_BASE}/votes/`;
         const selectedVoterId = parseInt(voterDropdown.value);
         const selectedCandidateCode = candidateDropdown.value;
 
@@ -94,16 +180,39 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
 
             if (response.ok) {
-                const votes = await response.json();
-                renderVotes(votes);
+                allVotes = await response.json();
+                filteredVotes = [...allVotes];
+                currentPage = 1;
+                renderVotes();
+                setupPagination();
+                
+                // Add search functionality
+                const searchInput = document.getElementById('votesSearch');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        const searchTerm = e.target.value.toLowerCase();
+                        if (searchTerm) {
+                            filteredVotes = allVotes.filter(vote => {
+                                return Object.values(vote).some(value => 
+                                    String(value).toLowerCase().includes(searchTerm)
+                                );
+                            });
+                        } else {
+                            filteredVotes = [...allVotes];
+                        }
+                        currentPage = 1;
+                        renderVotes();
+                        setupPagination();
+                    });
+                }
             } else if (response.status === 404) {
-                tbody.innerHTML = `<tr><td colspan="4">No votes found.</td></tr>`;
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center">No votes found.</td></tr>';
             } else {
-                alert("Failed to load votes.");
+                throw new Error('Failed to load votes');
             }
         } catch (err) {
             console.error("Error loading votes:", err);
-            alert("Network error while loading votes.");
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Error loading votes</td></tr>';
         }
     }
 
@@ -112,21 +221,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadCandidates();
     await loadVotes();
 
-    // ✅ Reload votes on button click
-    loadVotesBtn.addEventListener("click", loadVotes);
+    // Event listeners
+    loadVotesBtn?.addEventListener("click", loadVotes);
+    voterDropdown?.addEventListener("change", loadVotes);
+    candidateDropdown?.addEventListener("change", loadVotes);
 
-    // ✅ Reload votes when voter or candidate changes
-    voterDropdown.addEventListener("change", loadVotes);
-    candidateDropdown.addEventListener("change", loadVotes);
-
-
-
-
-
-
-
-// ✅ Export table to PDF with dynamic title + filename + serial number
-    document.getElementById("exportPDF").addEventListener("click", () => {
+    // Export to PDF
+    document.getElementById("exportPDF")?.addEventListener("click", () => {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
@@ -144,30 +245,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Title in PDF
         doc.text(title, 14, 15);
 
-        // Build table manually (to inject S/No column)
-        const table = document.getElementById("votesTable");
-        const rows = Array.from(table.querySelectorAll("tbody tr"));
-
-        // ❌ Skip the first header cell (ID)
-        const headCells = Array.from(table.querySelectorAll("thead tr th"))
-            .slice(1) // remove first column
-            .map((th) => th.textContent);
-
-        // Add S/No as the first column header
-        const head = [["S/No", ...headCells]];
-
-        // Build body with serial number, skipping first <td>
-        const body = rows.map((tr, i) => [
-            i + 1, // serial number
-            ...Array.from(tr.querySelectorAll("td"))
-                .slice(1) // remove first column
-                .map((td) => td.textContent),
+        // Get all votes (not just the current page)
+        const allRows = filteredVotes.map((vote, index) => [
+            index + 1,
+            vote.user_name || 'N/A',
+            vote.candidate_name || 'N/A',
+            vote.office_name || 'N/A',
+            vote.created_at ? new Date(vote.created_at).toLocaleString() : 'N/A'
         ]);
 
         // Render table
         doc.autoTable({
-            head: head,
-            body: body,
+            head: [['#', 'Voter', 'Candidate', 'Office Voted For', 'Date']],
+            body: allRows,
             startY: 25,
             theme: "grid",
             headStyles: { fillColor: [41, 128, 185] },
@@ -177,7 +267,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const safeFilename = title.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9-_]/g, "");
         doc.save(`${safeFilename}.pdf`);
     });
-
+});
 
 
 
@@ -200,4 +290,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     //     doc.save("votes_report.pdf");
     // });
 
-});
+// });
