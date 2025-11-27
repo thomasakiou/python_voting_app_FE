@@ -150,22 +150,40 @@ async function handleToggleStatus(e) {
 }
 
 // Update the updateAllVotersStatus function
+// Update the updateAllVotersStatus function
 async function updateAllVotersStatus(enable) {
     if (!confirm(`Are you sure you want to ${enable ? 'enable' : 'disable'} all voters?`)) {
         return;
     }
 
     try {
-        const response = await fetch(`${API_BASE}/users/bulk-update`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
-            },
-            body: JSON.stringify({ is_active: enable, role: 'voter' })
-        });
+        // First, get all voter IDs
+        const voterIds = allUsers
+            .filter(user => user.role === 'voter')
+            .map(user => user.id);
 
-        if (response.ok) {
+        if (voterIds.length === 0) {
+            alert('No voters found to update');
+            return;
+        }
+
+        // Update each voter individually
+        const updatePromises = voterIds.map(userId => 
+            fetch(`${API_BASE}/users/${userId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({ is_active: enable })
+            })
+        );
+
+        // Wait for all updates to complete
+        const responses = await Promise.all(updatePromises);
+        const allOk = responses.every(response => response.ok);
+
+        if (allOk) {
             alert(`All voters have been ${enable ? 'enabled' : 'disabled'} successfully!`);
             // Update all users' status in the local data
             allUsers.forEach(user => {
@@ -176,8 +194,7 @@ async function updateAllVotersStatus(enable) {
             // Re-render the users to reflect the changes
             renderUsers();
         } else {
-            const error = await response.json();
-            throw new Error(error.message || 'Failed to update voters status');
+            throw new Error('Failed to update some voters');
         }
     } catch (err) {
         console.error('Error updating voters status:', err);
