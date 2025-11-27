@@ -60,7 +60,11 @@ async function loadUsers() {
 // Render users function
 // Update the renderUsers function
 function renderUsers() {
-    if (!tbody) return;
+    const tbody = document.querySelector('#usersTable tbody');
+    if (!tbody) {
+        console.error('Table body not found');
+        return;
+    }
     
     const start = (currentPage - 1) * rowsPerPage;
     const end = start + rowsPerPage;
