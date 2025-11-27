@@ -43,6 +43,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <div class="votes-list">
     <h2>All Votes</h2>
+
+    <div style="display: flex; gap: 20px; align-items: center; width: 100%; margin-bottom: 20px;">
+    <!-- Voter Dropdown -->
+    <div class="voter-select" style="flex: 1;">
+        <label for="voterDropdown">Select Voter:</label>
+        <select id="voterDropdown" style="width: 100%;">
+            <option value="">-- All Voters --</option>
+            <!-- Voters will be dynamically loaded here -->
+        </select>
+    </div>
+
+    <!-- Candidate Dropdown -->
+    <div class="candidate-select" style="flex: 1;">
+        <label for="candidateDropdown">Select Candidate:</label>
+        <select id="candidateDropdown" style="width: 100%;">
+            <option value="">-- All Candidates --</option>
+            <!-- Candidates will be dynamically loaded here -->
+        </select>
+    </div>
+</div>
+
     <div class="all-users">
         <button id="loadVotes" class="mt-1">Load Votes</button>
         <button id="exportPDF" class="mt-1"><span class="btn-icon">📄</span> Export Votes to PDF</button>
