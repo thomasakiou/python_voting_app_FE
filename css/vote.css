@@ -252,6 +252,7 @@ button {
 
 button:hover {
     background: var(--primary-dark);
+    color: var(--card-bg);
 }
 
 #voteMessage {
