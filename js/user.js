@@ -81,9 +81,9 @@ function renderUsers() {
             <td>${user.phone || 'N/A'}</td>
             <td>${user.role || 'N/A'}</td>
             <td>
-                <div class="btn-group" role="group">
-                    <button class="btn btn-sm btn-primary edit-user" data-id="${user.id}">Edit</button>
-                    <button class="btn btn-sm btn-danger delete-user" data-id="${user.id}">Delete</button>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary px-3 py-1 edit-user" data-id="${user.id}">Edit</button>
+                    <button class="btn btn-danger px-3 py-1 delete-user" data-id="${user.id}">Delete</button>
                 </div>
             </td>
         `;
