@@ -156,47 +156,31 @@ async function updateAllVotersStatus(enable) {
     }
 
     try {
-        // First, get all voter IDs
-        const voterIds = allUsers
-            .filter(user => user.role === 'voter')
-            .map(user => user.id);
+        // Use the bulk enable/disable endpoint
+        const endpoint = enable ? 'enable-voters' : 'disable-voters';
+        const response = await fetch(`${API_BASE}/users/${endpoint}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({}) // Empty body since we're using specific endpoints
+        });
 
-        if (voterIds.length === 0) {
-            alert('No voters found to update');
-            return;
-        }
-
-        // Update each voter individually
-        const updatePromises = voterIds.map(userId => 
-            fetch(`${API_BASE}/users/${userId}`, {
-                method: 'POST', // Changed from PATCH to POST
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token
-                },
-                body: JSON.stringify({ is_active: enable })
-            })
-        );
-
-        // Wait for all updates to complete
-        const responses = await Promise.all(updatePromises);
-        const allOk = responses.every(response => response.ok);
-
-        if (allOk) {
-            alert(`All voters have been ${enable ? 'enabled' : 'disabled'} successfully!`);
-            // Update all users' status in the local data
+        if (response.ok) {
+            // Update local data
             allUsers.forEach(user => {
                 if (user.role === 'voter') {
                     user.is_active = enable;
                 }
             });
+            
+            alert(`All voters have been ${enable ? 'enabled' : 'disabled'} successfully!`);
             // Re-render the users to reflect the changes
             renderUsers();
         } else {
-            // Get error details from the first failed response
-            const failedResponse = responses.find(r => !r.ok);
-            const error = await failedResponse.json().catch(() => ({}));
-            throw new Error(error.message || 'Failed to update some voters');
+            const error = await response.json().catch(() => ({}));
+            throw new Error(error.message || `Failed to ${enable ? 'enable' : 'disable'} voters`);
         }
     } catch (err) {
         console.error('Error updating voters status:', err);
