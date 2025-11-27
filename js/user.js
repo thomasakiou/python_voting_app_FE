@@ -155,13 +155,13 @@ async function updateAllVotersStatus(enable) {
     }
 
     try {
-        const response = await fetch(`${API_BASE}/users/status`, {
-            method: 'PATCH',
+        const response = await fetch(`${API_BASE}/users/bulk-update`, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + token
             },
-            body: JSON.stringify({ active: enable })
+            body: JSON.stringify({ is_active: enable, role: 'voter' })
         });
 
         if (response.ok) {
