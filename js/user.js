@@ -4,6 +4,7 @@ import {API_BASE, configReady} from "./config.js";
 let currentPage = 1;
 const rowsPerPage = 10;
 let allUsers = [];
+let filteredUsers = [];
 
 // DOM elements
 const tbody = document.querySelector('#usersTable tbody');
@@ -32,7 +33,7 @@ paginationContainer.appendChild(entriesInfo);
 tableContainer.appendChild(paginationContainer);
 
 // Store filtered users for search functionality
-let filteredUsers = [];
+// let filteredUsers = [];
 
 // Upload functionality
 document.addEventListener("DOMContentLoaded", async () => {
@@ -97,27 +98,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     await configReady;
 
     async function loadUsers() {
-        tbody.innerHTML = "<tr><td colspan='5' class='text-center'>Loading users...</td></tr>";
-        const token = localStorage.getItem("access_token");
-
         try {
             const response = await fetch(`${API_BASE}/users/`, {
-                method: "GET",
-                headers: {"Authorization": "Bearer " + token}
+                headers: { Authorization: "Bearer " + token },
             });
-
+            
             if (response.ok) {
                 allUsers = await response.json();
-                displayUsers(currentPage, allUsers);
-                setupPagination(allUsers);
-                setupEventListeners();
+                filteredUsers = [...allUsers];
+                currentPage = 1;
+                renderUsers();
+                setupPagination();
+                updateEntriesInfo();
             } else {
-                const error = await response.json();
-                alert(error.detail || "Failed to load users.");
+                throw new Error("Failed to load users");
             }
         } catch (err) {
             console.error("Error loading users:", err);
-            tbody.innerHTML = "<tr><td colspan='5' class='text-center text-danger'>Error loading users</td></tr>";
+            const tbody = document.querySelector("#usersTable tbody");
+            if (tbody) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Error loading users</td></tr>';
+            }
         }
     }
 
@@ -275,59 +276,59 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Setup pagination controls
-    function setupPagination(users = allUsers) {
-        const pageCount = Math.ceil(users.length / rowsPerPage);
-        paginationContainer.innerHTML = '';
+    // function setupPagination(users = allUsers) {
+    //     const pageCount = Math.ceil(users.length / rowsPerPage);
+    //     paginationContainer.innerHTML = '';
 
-        if (pageCount <= 1) return;
+    //     if (pageCount <= 1) return;
 
-        const ul = document.createElement('ul');
-        ul.className = 'pagination';
+    //     const ul = document.createElement('ul');
+    //     ul.className = 'pagination';
 
-        // Previous button
-        const prevLi = document.createElement('li');
-        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
-        prevLi.innerHTML = '<a class="page-link" href="#" aria-label="Previous">Previous</a>';
-        prevLi.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (currentPage > 1) {
-                currentPage--;
-                displayUsers(currentPage, users);
-                setupPagination(users);
-            }
-        });
-        ul.appendChild(prevLi);
+    //     // Previous button
+    //     const prevLi = document.createElement('li');
+    //     prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+    //     prevLi.innerHTML = '<a class="page-link" href="#" aria-label="Previous">Previous</a>';
+    //     prevLi.addEventListener('click', (e) => {
+    //         e.preventDefault();
+    //         if (currentPage > 1) {
+    //             currentPage--;
+    //             displayUsers(currentPage, users);
+    //             setupPagination(users);
+    //         }
+    //     });
+    //     ul.appendChild(prevLi);
 
-        // Page numbers
-        for (let i = 1; i <= pageCount; i++) {
-            const li = document.createElement('li');
-            li.className = `page-item ${i === currentPage ? 'active' : ''}`;
-            li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-            li.addEventListener('click', (e) => {
-                e.preventDefault();
-                currentPage = i;
-                displayUsers(currentPage, users);
-                setupPagination(users);
-            });
-            ul.appendChild(li);
-        }
+    //     // Page numbers
+    //     for (let i = 1; i <= pageCount; i++) {
+    //         const li = document.createElement('li');
+    //         li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+    //         li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+    //         li.addEventListener('click', (e) => {
+    //             e.preventDefault();
+    //             currentPage = i;
+    //             displayUsers(currentPage, users);
+    //             setupPagination(users);
+    //         });
+    //         ul.appendChild(li);
+    //     }
 
-        // Next button
-        const nextLi = document.createElement('li');
-        nextLi.className = `page-item ${currentPage === pageCount ? 'disabled' : ''}`;
-        nextLi.innerHTML = '<a class="page-link" href="#" aria-label="Next">Next</a>';
-        nextLi.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (currentPage < pageCount) {
-                currentPage++;
-                displayUsers(currentPage, users);
-                setupPagination(users);
-            }
-        });
-        ul.appendChild(nextLi);
+    //     // Next button
+    //     const nextLi = document.createElement('li');
+    //     nextLi.className = `page-item ${currentPage === pageCount ? 'disabled' : ''}`;
+    //     nextLi.innerHTML = '<a class="page-link" href="#" aria-label="Next">Next</a>';
+    //     nextLi.addEventListener('click', (e) => {
+    //         e.preventDefault();
+    //         if (currentPage < pageCount) {
+    //             currentPage++;
+    //             displayUsers(currentPage, users);
+    //             setupPagination(users);
+    //         }
+    //     });
+    //     ul.appendChild(nextLi);
 
-        paginationContainer.appendChild(ul);
-    }
+    //     paginationContainer.appendChild(ul);
+    // }
 
     // Helper function to update all voters status
     async function updateAllVotersStatus(enable) {
@@ -354,6 +355,24 @@ document.addEventListener("DOMContentLoaded", async () => {
             alert(`An error occurred while ${enable ? 'enabling' : 'disabling'} all voters.`);
         }
     }
+
+    // Example if you have a search input
+    document.getElementById('searchInput')?.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        if (searchTerm) {
+            filteredUsers = allUsers.filter(user => {
+                return Object.values(user).some(value => 
+                    String(value).toLowerCase().includes(searchTerm)
+                );
+            });
+        } else {
+            filteredUsers = [...allUsers];
+        }
+        currentPage = 1;
+        renderUsers();
+        setupPagination();
+        updateEntriesInfo();
+    });
 
     // Search functionality
     const searchInput = document.getElementById('userSearch');
@@ -407,7 +426,105 @@ document.addEventListener("DOMContentLoaded", async () => {
         loadUsersBtn.addEventListener("click", loadUsers);
     }
 
+    function updateEntriesInfo() {
+        const entriesInfo = document.querySelector('.entries-info');
+        if (!entriesInfo) return;
+        
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = Math.min(start + rowsPerPage, filteredUsers.length);
+        const total = filteredUsers.length;
+        const showingFrom = total > 0 ? start + 1 : 0;
+        
+        entriesInfo.textContent = `Showing ${showingFrom} to ${end} of ${total} entries`;
+    }
 
+    function setupPagination() {
+        const pageCount = Math.ceil(filteredUsers.length / rowsPerPage);
+        const pagination = document.querySelector('.pagination');
+        if (!pagination) return;
+        
+        pagination.innerHTML = '';
+
+        if (pageCount <= 1) {
+            pagination.style.display = 'none';
+            return;
+        } else {
+            pagination.style.display = 'flex';
+        }
+
+        // Previous button
+        const prevLi = document.createElement('li');
+        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+        prevLi.innerHTML = '<a class="page-link" href="#" aria-label="Previous">Previous</a>';
+        prevLi.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentPage > 1) {
+                currentPage--;
+                renderUsers();
+                setupPagination();
+                updateEntriesInfo();
+            }
+        });
+        pagination.appendChild(prevLi);
+
+        // Page numbers
+        for (let i = 1; i <= pageCount; i++) {
+            const li = document.createElement('li');
+            li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+            const a = document.createElement('a');
+            a.className = 'page-link';
+            a.href = '#';
+            a.textContent = i;
+            a.addEventListener('click', (e) => {
+                e.preventDefault();
+                currentPage = i;
+                renderUsers();
+                setupPagination();
+                updateEntriesInfo();
+            });
+            li.appendChild(a);
+            pagination.appendChild(li);
+        }
+
+        // Next button
+        const nextLi = document.createElement('li');
+        nextLi.className = `page-item ${currentPage === pageCount ? 'disabled' : ''}`;
+        nextLi.innerHTML = '<a class="page-link" href="#" aria-label="Next">Next</a>';
+        nextLi.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentPage < pageCount) {
+                currentPage++;
+                renderUsers();
+                setupPagination();
+                updateEntriesInfo();
+            }
+        });
+        pagination.appendChild(nextLi);
+    }
+
+        function renderUsers() {
+        const tbody = document.querySelector("#usersTable tbody");
+        if (!tbody) return;
+        
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const paginatedUsers = filteredUsers.slice(start, end);
+        
+        tbody.innerHTML = '';
+        
+        if (paginatedUsers.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center">No users found</td></tr>';
+            return;
+        }
+        
+        // Your existing user rendering code here, but use paginatedUsers instead of allUsers
+        paginatedUsers.forEach((user, index) => {
+            const tr = document.createElement('tr');
+            // Your existing row creation code here
+            // ...
+            tbody.appendChild(tr);
+        });
+    }
 
     // ✅ Export Users table to PDF (only voters, exclude last two columns)
     document.getElementById("exportUsersPDF").addEventListener("click", () => {
