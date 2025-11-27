@@ -434,7 +434,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Build body with serial number, only "voter" rows, skip last two columns
         const body = rows
             .map((tr) => {
-                const cells = Array.from(tr.querySelectorAll("td")).slice(0, -2); // remove last two columns
+                const cells = Array.from(tr.querySelectorAll("td")).slice(1, -2); // remove last two columns
                 const rowValues = cells.map((td) => td.textContent);
 
                 // Get role (before slicing last two, role should have been second-to-last column)
