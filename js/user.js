@@ -10,6 +10,7 @@ let token;
 // DOM elements
 const tbody = document.querySelector('#usersTable tbody');
 const searchInput = document.getElementById('userSearch');
+const entriesInfo = document.querySelector('.entries-info');
 
 // Initialize when DOM is loaded
 document.addEventListener("DOMContentLoaded", async () => {
@@ -248,15 +249,13 @@ function setupPagination() {
 
 // Update entries info
 function updateEntriesInfo() {
-    const entriesInfo = document.querySelector('.entries-info');
     if (!entriesInfo) return;
     
-    const start = (currentPage - 1) * rowsPerPage;
+    const start = (currentPage - 1) * rowsPerPage + 1;
+    const end = Math.min(currentPage * rowsPerPage, filteredUsers.length);
     const total = filteredUsers.length;
-    const end = Math.min(start + rowsPerPage, total);
-    const showingFrom = total > 0 ? start + 1 : 0;
     
-    entriesInfo.textContent = `Showing ${showingFrom} to ${end} of ${total} entries`;
+    entriesInfo.textContent = `Showing ${start} to ${end} of ${total} entries`;
 }
 
 // Search handler
@@ -549,21 +548,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Display users for current page
-    function displayUsers(page, users = allUsers) {
-        const start = (page - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-        const paginatedUsers = users.slice(start, end);
-        const total = users.length;
-
-        // Update entries info
-        const showingFrom = total > 0 ? start + 1 : 0;
-        const showingTo = Math.min(end, total);
-        entriesInfo.textContent = `Showing ${showingFrom} to ${showingTo} of ${total} entries`;
-
-        if (paginatedUsers.length === 0) {
-            tbody.innerHTML = "<tr><td colspan='6' class='text-center'>No users found.</td></tr>";
-            return;
-        }
+            function displayUsers(page, users = allUsers) {
+            if (!tbody) return;
+            
+            const start = (page - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const paginatedUsers = users.slice(start, end);
+            
+            tbody.innerHTML = '';
+            
+            if (paginatedUsers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center">No users found</td></tr>';
+                updateEntriesInfo();
+                return;
+            }
 
         tbody.innerHTML = paginatedUsers.map((user, index) => `
             <tr>
