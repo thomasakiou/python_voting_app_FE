@@ -8,7 +8,7 @@ let filteredUsers = [];
 let token;
 
 // DOM elements
-// const tbody = document.querySelector('#usersTable tbody');
+let tbody;
 const searchInput = document.getElementById('userSearch');
 const entriesInfo = document.querySelector('.entries-info');
 
@@ -16,6 +16,13 @@ const entriesInfo = document.querySelector('.entries-info');
 document.addEventListener("DOMContentLoaded", async () => {
     await configReady;
     token = localStorage.getItem("access_token");
+    
+    // Get table body
+    tbody = document.querySelector('#usersTable tbody');
+    if (!tbody) {
+        console.error('Table body not found');
+        return;
+    }
     
     // Load initial data
     await loadUsers();
@@ -60,11 +67,7 @@ async function loadUsers() {
 // Render users function
 // Update the renderUsers function
 function renderUsers() {
-    const tbody = document.querySelector('#usersTable tbody');
-    if (!tbody) {
-        console.error('Table body not found');
-        return;
-    }
+    if (!tbody) return;
     
     const start = (currentPage - 1) * rowsPerPage;
     const end = start + rowsPerPage;
@@ -104,7 +107,7 @@ function renderUsers() {
     });
     
     // Add event listeners for the toggle buttons
-    document.querySelectorAll('.toggle-status').forEach(button => {
+    tbody.querySelectorAll('.toggle-status').forEach(button => {
         button.addEventListener('click', handleToggleStatus);
     });
     
@@ -257,11 +260,11 @@ function setupPagination() {
 function updateEntriesInfo() {
     if (!entriesInfo) return;
     
-    const start = (currentPage - 1) * rowsPerPage + 1;
-    const end = Math.min(currentPage * rowsPerPage, filteredUsers.length);
     const total = filteredUsers.length;
+    const showingFrom = total > 0 ? (currentPage - 1) * rowsPerPage + 1 : 0;
+    const showingTo = Math.min(currentPage * rowsPerPage, total);
     
-    entriesInfo.textContent = `Showing ${start} to ${end} of ${total} entries`;
+    entriesInfo.textContent = `Showing ${showingFrom} to ${showingTo} of ${total} entries`;
 }
 
 // Search handler
@@ -281,6 +284,7 @@ function handleSearch(e) {
     currentPage = 1;
     renderUsers();
     setupPagination();
+    updateEntriesInfo();
 }
 
 // Handle file upload
