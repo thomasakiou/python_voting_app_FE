@@ -269,6 +269,7 @@ table {
 
 .table-head {
     background-color: var(--primary);
+    color: var(--card-bg);
 }
 
 table th, table td {
@@ -280,6 +281,7 @@ table th, table td {
 
 table th {
     background: #f1f1f1;
+    color: var(--card-bg);
 }
 
 
