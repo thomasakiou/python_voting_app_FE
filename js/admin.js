@@ -160,61 +160,65 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Load votes with pagination
-    async function loadVotes() {
-        const tbody = document.querySelector("#votesTable tbody");
-        tbody.innerHTML = "<tr><td colspan='6' class='text-center'>Loading votes...</td></tr>";
-
-        let url = `${API_BASE}/votes/`;
-        const selectedVoterId = parseInt(voterDropdown.value);
-        const selectedCandidateCode = candidateDropdown.value;
-
-        if (selectedVoterId) {
-            url = `${API_BASE}/votes/${encodeURIComponent(selectedVoterId)}`;
-        } else if (selectedCandidateCode) {
-            url = `${API_BASE}/votes/code/${encodeURIComponent(selectedCandidateCode)}`;
-        }
-
-        try {
-            const response = await fetch(url, {
-                headers: { Authorization: "Bearer " + token },
-            });
-
-            if (response.ok) {
-                allVotes = await response.json();
-                filteredVotes = [...allVotes];
-                currentPage = 1;
-                renderVotes();
-                setupPagination();
-                
-                // Add search functionality
-                const searchInput = document.getElementById('votesSearch');
-                if (searchInput) {
-                    searchInput.addEventListener('input', (e) => {
-                        const searchTerm = e.target.value.toLowerCase();
-                        if (searchTerm) {
-                            filteredVotes = allVotes.filter(vote => {
-                                return Object.values(vote).some(value => 
-                                    String(value).toLowerCase().includes(searchTerm)
-                                );
-                            });
-                        } else {
-                            filteredVotes = [...allVotes];
-                        }
-                        currentPage = 1;
-                        renderVotes();
-                        setupPagination();
-                    });
-                }
-            } else if (response.status === 404) {
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center">No votes found.</td></tr>';
-            } else {
-                throw new Error('Failed to load votes');
-            }
-        } catch (err) {
-            console.error("Error loading votes:", err);
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Error loading votes</td></tr>';
-        }
+    // Load voters into dropdown
+async function loadVoters() {
+    const voterDropdown = document.getElementById("voterDropdown");
+    if (!voterDropdown) {
+        console.error("Voter dropdown element not found");
+        return;
     }
+
+    try {
+        const res = await fetch(`${API_BASE}/users/`, {
+            headers: { Authorization: "Bearer " + token },
+        });
+        if (res.ok) {
+            const users = await res.json();
+            // Clear existing options except the first one
+            while (voterDropdown.options.length > 1) {
+                voterDropdown.remove(1);
+            }
+            users.forEach((user) => {
+                const opt = document.createElement("option");
+                opt.value = user.id;
+                opt.textContent = user.full_name || user.username || user.code;
+                voterDropdown.appendChild(opt);
+            });
+        }
+    } catch (err) {
+        console.error("Error loading voters:", err);
+    }
+}
+
+// Load candidates into dropdown
+async function loadCandidates() {
+    const candidateDropdown = document.getElementById("candidateDropdown");
+    if (!candidateDropdown) {
+        console.error("Candidate dropdown element not found");
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_BASE}/candidates/`, {
+            headers: { Authorization: "Bearer " + token },
+        });
+        if (res.ok) {
+            const candidates = await res.json();
+            // Clear existing options except the first one
+            while (candidateDropdown.options.length > 1) {
+                candidateDropdown.remove(1);
+            }
+            candidates.forEach((cand) => {
+                const opt = document.createElement("option");
+                opt.value = cand.candidate_code;
+                opt.textContent = cand.name || cand.code;
+                candidateDropdown.appendChild(opt);
+            });
+        }
+    } catch (err) {
+        console.error("Error loading candidates:", err);
+    }
+}
 
     // Initial load
     await loadVoters();
