@@ -689,20 +689,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Search functionality
     const searchInput = document.getElementById('userSearch');
-    searchInput.addEventListener('input', (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        if (searchTerm) {
-            filteredUsers = allUsers.filter(user => 
-                (user.full_name && user.full_name.toLowerCase().includes(searchTerm)) ||
-                (user.username && user.username.toLowerCase().includes(searchTerm))
-            );
-        } else {
-            filteredUsers = [...allUsers];
-        }
-        currentPage = 1; // Reset to first page when searching
-        displayUsers(currentPage, filteredUsers);
-        setupPagination(filteredUsers);
-    });
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            if (searchTerm) {
+                filteredUsers = allUsers.filter(user => 
+                    (user.full_name && user.full_name.toLowerCase().includes(searchTerm)) ||
+                    (user.username && user.username.toLowerCase().includes(searchTerm))
+                );
+            } else {
+                filteredUsers = [...allUsers];
+            }
+            currentPage = 1;
+            renderUsers();
+            setupPagination();
+        });
+    }
 
     // Initialize and assign loadUsers
     loadUsers = async function() {
