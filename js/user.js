@@ -57,6 +57,7 @@ async function loadUsers() {
 }
 
 // Render users function
+// Update the renderUsers function
 function renderUsers() {
     if (!tbody) return;
     
@@ -67,7 +68,7 @@ function renderUsers() {
     tbody.innerHTML = '';
     
     if (paginatedUsers.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center">No users found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center">No users found</td></tr>';
         updateEntriesInfo();
         return;
     }
@@ -81,16 +82,106 @@ function renderUsers() {
             <td>${user.phone || 'N/A'}</td>
             <td>${user.role || 'N/A'}</td>
             <td>
+                <button class="btn btn-sm ${user.is_active ? 'btn-success' : 'btn-secondary'} toggle-status" 
+                        data-id="${user.id}" 
+                        data-active="${user.is_active}">
+                    ${user.is_active ? 'Active' : 'Inactive'}
+                </button>
+            </td>
+            <td>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-primary px-3 py-1 edit-user" data-id="${user.id}">Edit</button>
-                    <button class="btn btn-danger px-3 py-1 delete-user" data-id="${user.id}">Delete</button>
+                    <button class="btn btn-primary btn-sm edit-user" data-id="${user.id}">Edit</button>
+                    <button class="btn btn-danger btn-sm delete-user" data-id="${user.id}">Delete</button>
                 </div>
             </td>
         `;
         tbody.appendChild(tr);
     });
     
+    // Add event listeners for the toggle buttons
+    document.querySelectorAll('.toggle-status').forEach(button => {
+        button.addEventListener('click', handleToggleStatus);
+    });
+    
     updateEntriesInfo();
+}
+
+// Add the handleToggleStatus function
+async function handleToggleStatus(e) {
+    const button = e.target;
+    const userId = button.dataset.id;
+    const currentStatus = button.dataset.active === 'true';
+    const newStatus = !currentStatus;
+
+    if (!confirm(`Are you sure you want to mark this user as ${newStatus ? 'active' : 'inactive'}?`)) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE}/users/${userId}/status`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({ is_active: newStatus })
+        });
+
+        if (response.ok) {
+            // Update the UI
+            button.dataset.active = newStatus;
+            button.textContent = newStatus ? 'Active' : 'Inactive';
+            button.className = `btn btn-sm ${newStatus ? 'btn-success' : 'btn-secondary'} toggle-status`;
+            
+            // Update the local data
+            const user = allUsers.find(u => u.id === userId);
+            if (user) {
+                user.is_active = newStatus;
+            }
+        } else {
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to update user status');
+        }
+    } catch (err) {
+        console.error('Error toggling user status:', err);
+        alert('Error: ' + (err.message || 'Failed to update user status'));
+    }
+}
+
+// Update the updateAllVotersStatus function
+async function updateAllVotersStatus(enable) {
+    if (!confirm(`Are you sure you want to ${enable ? 'enable' : 'disable'} all voters?`)) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE}/users/status`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({ active: enable })
+        });
+
+        if (response.ok) {
+            alert(`All voters have been ${enable ? 'enabled' : 'disabled'} successfully!`);
+            // Update all users' status in the local data
+            allUsers.forEach(user => {
+                if (user.role === 'voter') {
+                    user.is_active = enable;
+                }
+            });
+            // Re-render the users to reflect the changes
+            renderUsers();
+        } else {
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to update voters status');
+        }
+    } catch (err) {
+        console.error('Error updating voters status:', err);
+        alert('Error: ' + (err.message || 'Failed to update voters status'));
+    }
 }
 
 // Setup pagination
