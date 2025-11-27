@@ -118,7 +118,7 @@ async function handleToggleStatus(e) {
     }
 
     try {
-        const response = await fetch(`${API_BASE}/users/${userId}/status`, {
+        const response = await fetch(`${API_BASE}/users/${userId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
