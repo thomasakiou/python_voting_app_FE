@@ -362,33 +362,33 @@ function exportToPDF() {
 }
 
 // Update all voters status
-async function updateAllVotersStatus(enable) {
-    if (!confirm(`Are you sure you want to ${enable ? 'enable' : 'disable'} all voters?`)) {
-        return;
-    }
+// async function updateAllVotersStatus(enable) {
+//     if (!confirm(`Are you sure you want to ${enable ? 'enable' : 'disable'} all voters?`)) {
+//         return;
+//     }
 
-    try {
-        const response = await fetch(`${API_BASE}/users/status`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
-            },
-            body: JSON.stringify({ active: enable })
-        });
+//     try {
+//         const response = await fetch(`${API_BASE}/users/status`, {
+//             method: 'PATCH',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'Authorization': 'Bearer ' + token
+//             },
+//             body: JSON.stringify({ active: enable })
+//         });
 
-        if (response.ok) {
-            alert(`All voters have been ${enable ? 'enabled' : 'disabled'} successfully!`);
-            await loadUsers(); // Reload users to reflect changes
-        } else {
-            const error = await response.json();
-            throw new Error(error.message || 'Failed to update voters status');
-        }
-    } catch (err) {
-        console.error('Error updating voters status:', err);
-        alert('Error: ' + (err.message || 'Failed to update voters status'));
-    }
-}
+//         if (response.ok) {
+//             alert(`All voters have been ${enable ? 'enabled' : 'disabled'} successfully!`);
+//             await loadUsers(); // Reload users to reflect changes
+//         } else {
+//             const error = await response.json();
+//             throw new Error(error.message || 'Failed to update voters status');
+//         }
+//     } catch (err) {
+//         console.error('Error updating voters status:', err);
+//         alert('Error: ' + (err.message || 'Failed to update voters status'));
+//     }
+// }
 
 // Initialize file upload event listener
 const uploadInput = document.getElementById("uploadFile");
