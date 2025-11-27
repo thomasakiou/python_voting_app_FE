@@ -8,7 +8,7 @@ let filteredUsers = [];
 let token;
 
 // DOM elements
-const tbody = document.querySelector('#usersTable tbody');
+// const tbody = document.querySelector('#usersTable tbody');
 const searchInput = document.getElementById('userSearch');
 const entriesInfo = document.querySelector('.entries-info');
 
