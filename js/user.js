@@ -167,9 +167,9 @@ async function updateAllVotersStatus(enable) {
         });
 
         if (response.ok) {
-            // Update local data
+            // Update local data, excluding users with 'user-user' role
             allUsers.forEach(user => {
-                if (user.role === 'voter') {
+                if (user.role === 'voter' && user.role !== 'user-user') {
                     user.is_active = enable;
                 }
             });
