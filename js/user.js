@@ -150,7 +150,6 @@ async function handleToggleStatus(e) {
 }
 
 // Update the updateAllVotersStatus function
-// Update the updateAllVotersStatus function
 async function updateAllVotersStatus(enable) {
     if (!confirm(`Are you sure you want to ${enable ? 'enable' : 'disable'} all voters?`)) {
         return;
@@ -170,7 +169,7 @@ async function updateAllVotersStatus(enable) {
         // Update each voter individually
         const updatePromises = voterIds.map(userId => 
             fetch(`${API_BASE}/users/${userId}`, {
-                method: 'PATCH',
+                method: 'POST', // Changed from PATCH to POST
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + token
@@ -194,7 +193,10 @@ async function updateAllVotersStatus(enable) {
             // Re-render the users to reflect the changes
             renderUsers();
         } else {
-            throw new Error('Failed to update some voters');
+            // Get error details from the first failed response
+            const failedResponse = responses.find(r => !r.ok);
+            const error = await failedResponse.json().catch(() => ({}));
+            throw new Error(error.message || 'Failed to update some voters');
         }
     } catch (err) {
         console.error('Error updating voters status:', err);
