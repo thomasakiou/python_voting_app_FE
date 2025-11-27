@@ -266,11 +266,15 @@ table {
     margin-top: 15px;
 }
 
+.table-head {
+    background-color: var(--primary);
+}
+
 table th, table td {
     padding: 10px;
     border: 1px solid #ddd;
     text-align: center;
-    background-color: var(--primary);
+    /* background-color: var(--primary); */
 }
 
 table th {
