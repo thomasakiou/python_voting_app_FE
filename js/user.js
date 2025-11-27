@@ -256,6 +256,8 @@ function setupPagination() {
     pagination.appendChild(nextLi);
 }
 
+
+
 // Update entries info
 function updateEntriesInfo() {
     if (!entriesInfo) return;
