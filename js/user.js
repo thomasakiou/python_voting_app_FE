@@ -156,15 +156,14 @@ async function updateAllVotersStatus(enable) {
     }
 
     try {
-        // Use the bulk enable/disable endpoint
-        const endpoint = enable ? 'enable-voters' : 'disable-voters';
-        const response = await fetch(`${API_BASE}/users/${endpoint}`, {
-            method: 'POST',
+        // Use the toggle-all-voters endpoint with PATCH method
+        const response = await fetch(`${API_BASE}/users/toggle-all-voters?enable=${enable}`, {
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + token
             },
-            body: JSON.stringify({}) // Empty body since we're using specific endpoints
+            body: JSON.stringify({}) // Empty body as we're using query params
         });
 
         if (response.ok) {
