@@ -423,7 +423,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Remove the last two columns from headers
         const headCells = Array.from(table.querySelectorAll("thead tr th"))
-            .slice(0, -2) // remove last two columns
+            .slice(1, -2) // remove last two columns
             .map((th) => th.textContent);
 
         // Add S/No as the first column header
